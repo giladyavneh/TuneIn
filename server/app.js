@@ -1,8 +1,10 @@
 const mysql = require("mysql");
 const express = require("express");
+const cors=require("cors")
 const app = express();
 
 app.use(express.json())
+app.use(cors())
 
 const DataBase = mysql.createConnection({
   host: "localhost",
@@ -112,5 +114,15 @@ app.post("/song", (req,response)=>{
       response.send(res)
   })
 })
+
+app.post("/playlist", (req,response)=>{
+  let sql="INSERT INTO playlists SET ?"
+  DataBase.query(sql,req.body,(err,res)=>{
+      if (err) throw err;
+      response.send(res)
+  })
+})
+
+
 
 module.exports = app;
