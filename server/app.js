@@ -123,6 +123,68 @@ app.post("/playlist", (req,response)=>{
   })
 })
 
+app.put("/album/:id",(req,response)=>{
+  let sql=`UPDATE albums SET ? WHERE id=${req.params.id}`
+  DataBase.query(sql,req.body,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the album you were looking for")
+  })
+})
 
+app.put("/song/:id",(req,response)=>{
+  let sql=`UPDATE songs SET ? WHERE id=${req.params.id}`
+  DataBase.query(sql,req.body,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the song you were looking for")
+  })
+})
+
+app.put("/artist/:id",(req,response)=>{
+  let sql=`UPDATE artists SET ? WHERE id=${req.params.id}`
+  DataBase.query(sql,req.body,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the artist you were looking for")
+  })
+})
+
+app.put("/playlist/:id",(req,response)=>{
+  let sql=`UPDATE playlists SET ? WHERE id=${req.params.id}`
+  DataBase.query(sql,req.body,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the playlist you were looking for")
+  })
+})
+
+app.delete("/artist/:id",(req,response)=>{
+  let sql=`DELETE FROM artists WHERE id=${req.params.id}`
+  DataBase.query(sql,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the artist you were looking for")
+  })
+})
+
+app.delete("/playlist/:id",(req,response)=>{
+  let sql=`DELETE FROM playlists WHERE id=${req.params.id}`
+  DataBase.query(sql,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the playlist you were looking for")
+  })
+})
+
+app.delete("/song/:id",(req,response)=>{
+  let sql=`DELETE FROM songs WHERE id=${req.params.id}`
+  DataBase.query(sql,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the song you were looking for")
+  })
+})
+
+app.delete("/album/:id",(req,response)=>{
+  let sql=`DELETE FROM albums WHERE id=${req.params.id}`
+  DataBase.query(sql,(err,res)=>{
+    if (err) throw err;
+    response.send(res.affectedRows>0?res:"We couldn't find the album you were looking for")
+  })
+})
 
 module.exports = app;
