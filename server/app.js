@@ -2,16 +2,13 @@ const mysql = require("mysql");
 const express = require("express");
 const cors=require("cors")
 const app = express();
+require('dotenv').config()
 
 app.use(express.json())
 app.use(cors())
 
-const DataBase = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "giladyavneh",
-  database: "tunein",
-});
+console.log(process.env.SQL_CREDENTIALS)
+const DataBase = mysql.createConnection(JSON.parse(process.env.SQL_CREDENTIALS))
 DataBase.connect((err, res) => {
   if (err) throw err;
   console.log("DataBase connected...");
