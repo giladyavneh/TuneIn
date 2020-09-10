@@ -15,7 +15,15 @@ DataBase.connect((err, res) => {
 });
 
 app.get("/top_songs", (req, response) => {
-  let sql = "SELECT * FROM songs LIMIT 20";
+  let sql = `SELECT songs.title AS title,
+  artists.name AS artist,
+  albums.name AS album,
+  songs.length AS length,
+  songs.youtube_link AS link
+  FROM songs
+  JOIN artists ON artists.id=songs.artist_id
+  JOIN albums ON songs.album_id=albums.id
+  LIMIT 20`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(res);

@@ -1,0 +1,12 @@
+.SongButton{
+    background-image: linear-gradient(rgb(30,30,30),black);
+    margin: 5px;
+    padding:5px;
+    color:whitesmoke;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+.metadata{
+    color: rgb(160, 160, 160);
+}
