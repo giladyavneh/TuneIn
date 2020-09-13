@@ -7,7 +7,6 @@ require('dotenv').config()
 app.use(express.json())
 app.use(cors())
 
-console.log(process.env.SQL_CREDENTIALS)
 const DataBase = mysql.createConnection(JSON.parse(process.env.SQL_CREDENTIALS))
 DataBase.connect((err, res) => {
   if (err) throw err;
