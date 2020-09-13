@@ -1,0 +1,10 @@
+#Player{
+    display: flex;
+    justify-content: space-between;
+}
+.songInfo .songTitle{
+    color: whitesmoke;
+}
+.songInfo .songMeta{
+    color: rgb(160, 160, 160);
+}
