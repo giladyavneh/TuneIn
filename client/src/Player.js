@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Player.css";
 import YouTube from "react-youtube"
 
 function Player({ song,next }) {
+  const [player,setPlayer]=useState()
+  
   return (
     <div id="Player">
       <div className="songInfo">
@@ -14,6 +16,7 @@ function Player({ song,next }) {
       <YouTube
         videoId={song.link}
         opts={{width:"200", height:"115", playerVars:{autoplay:1}}}
+        onReady={(e)=>setPlayer(e.target)}
         onEnd={next}
       />
     </div>
