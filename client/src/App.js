@@ -18,8 +18,9 @@ function App() {
     setCurrentSong(current)
   }
   function next(){
-    console.log(currentSong)
-    play(currentSong.index+1)
+    let ind=songs.findIndex(song=>song.title===currentSong.title)
+    play(songs[ind+1])
+    
   }
   return (
     <div style={{background:"rgb(100,100,100)", padding: "10px"}}>
