@@ -6,7 +6,7 @@ function Player({ song,next }) {
   const [player,setPlayer]=useState()
   
   return (
-    <div id="Player">
+    <div id="Player" style={{padding: "10px"}}>
       <div className="songInfo">
         <h1 className="songTitle">{song.title}</h1>
         <h4 className="songMeta">
