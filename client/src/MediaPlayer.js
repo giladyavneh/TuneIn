@@ -30,4 +30,4 @@ function MediaPlayer() {
   );
 }
 
-export default App;
+export default MediaPlayer;

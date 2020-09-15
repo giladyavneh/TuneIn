@@ -1,0 +1,16 @@
+.TopBanner{
+    padding: 0px 10px;
+    font-weight: 900;
+    color: whitesmoke;
+    background-image:linear-gradient(rgb(30,30,30),black);
+}
+.TopBanner h1{
+    font-size: 10vh;
+    margin: 0px;
+    display: inline;
+}
+.TopBanner h2{
+    font-size: 5vh;
+    color: rgb(160, 160, 160);
+    display: inline;
+}

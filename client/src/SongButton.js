@@ -4,7 +4,7 @@ import "./SongButton.css"
 
       
 
-function SongButton({title,artist,album,length,index,play,key}){
+function SongButton({title,artist,album,length,index,play,id}){
         return(
         <div className="SongButton">
             <div className="info">

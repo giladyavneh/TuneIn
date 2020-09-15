@@ -1,0 +1,28 @@
+.Avatar{
+    margin: 20px;
+    background-size: cover;
+    border-radius: 50%;
+    width:150px;
+    height:150px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: white;
+    font-weight: bold;
+    padding: 15px;
+}
+.identifier{
+    filter: invert(1);
+    position: absolute;
+    height: 30%;
+    width: 30%;
+    top:0;
+    right: 0;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+.identifier img{
+    height: 100%;
+}
