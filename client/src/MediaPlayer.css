@@ -8,9 +8,16 @@
   margin: 2px;
 }
 .wrapper{
+  background-color: rgba(0,0,0,0.5);
   position: fixed;
+  top: 0px;
   width: 100vw;
+  min-height: 100vh;
   padding-top: 20px;
+  z-index: 1;
+}
+.minimized{
+  z-index: 1;
 }
 .MediaPlayer{
   background:rgb(100,100,100);
