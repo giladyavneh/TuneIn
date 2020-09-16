@@ -2,6 +2,21 @@
     display: flex;
     justify-content: space-between;
 }
+.minimized{
+    background-image:linear-gradient(rgb(30,30,30),black);
+    position: fixed;
+    bottom: 0px;
+    width: 100vw;
+}
+.minimized h1{
+    display: inline;
+    font-size: 22px;
+    margin: 0px;
+}
+.minimized h4{
+    font-size: 16px;
+    margin: 0px;
+}
 .songInfo .songTitle{
     color: whitesmoke;
 }

@@ -7,7 +7,7 @@ function DisplayCarusel(props){
     useEffect(()=>{
         setItems(Array.isArray(props.children)?props.children.map(
             (x,i)=><div ref={el=>kids.current[i]=el}>{x}</div>):<div ref={el=>kids.current[0]=el}>{props.children}</div>)
-        },[])
+        },[props.children])
     function left(e){
         for(let i=0;i<props.children.length;i++){
             let papa=e.target.parentElement;
