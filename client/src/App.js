@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Home from "./Home";
 import MediaPlayer from "./MediaPlayer";
+import ArtistPage from "./ArtistPage";
+import PlayListPage from "./PlayListPage";
 function App() {
   const [playingNow, setPlayingNow] = useState();
   const [mediaPlays, setMediaPlays] = useState(false);
@@ -17,7 +19,9 @@ function App() {
 
   return (
     <div>
-      <Home quickAdd={quickAdd} quickPlay={quickPlay}/>
+      {/* <Home quickAdd={quickAdd} quickPlay={quickPlay}/> */}
+      {/* <ArtistPage id={2} quickAdd={quickAdd} quickPlay={quickPlay}/> */}
+      <PlayListPage id={1} quickAdd={quickAdd} quickPlay={quickPlay} type="album"/>
       {mediaPlays ? (
         <MediaPlayer
           songs={playingNow}

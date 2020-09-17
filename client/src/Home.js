@@ -37,7 +37,7 @@ function Home({quickPlay,quickAdd}) {
   );
 
   return (
-    <div style={{ background: "rgb(100,100,100)", minHeight: "100vh"}}>
+    <div style={{ background: "rgb(60,60,60)", minHeight: "100vh"}}>
       <TopBanner />
       <h1>Top Songs</h1>
       <DisplayCarusel>

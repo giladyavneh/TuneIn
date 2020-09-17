@@ -62,6 +62,32 @@ app.get("/top_playlists", (req, response) => {
   });
 });
 
+app.get("/song",(req,response)=>{
+  let field=Object.keys(req.query)[0]
+  let id=Object.values(req.query)[0];
+  let sql=`SELECT songs.title AS title,
+  songs.id as id,
+  albums.cover_image as album_image,
+  artists.cover_image as artist_image,
+  artists.name AS artist,
+  albums.name AS album,
+  songs.length AS length,
+  songs.youtube_link AS link
+  FROM songs
+  JOIN artists ON artists.id=songs.artist_id
+  JOIN albums ON songs.album_id=albums.id
+  ${field==="playlist"?
+  `JOIN songs_in_playlist ON songs.id=songs_in_playlist.song_id
+  JOIN playlists ON songs_in_playlist.playlist_id=playlists.id`:""}
+  WHERE ${field}s.id = '${id}'`;
+  DataBase.query(sql, (err, res) => {
+    if (err) throw err;
+    response.send(
+      res.length > 0 ? res : "We couldn't find the song you were looking for"
+    );
+  });
+})
+
 app.get("/song/:id", (req, response) => {
   let sql = `SELECT songs.title AS title,
   songs.id as id,
@@ -84,17 +110,13 @@ app.get("/song/:id", (req, response) => {
 });
 
 app.get("/album/:id", (req, response) => {
-  let sql = `SELECT songs.title AS title,
-  songs.id as id,
-  albums.cover_image as album_image,
+  let sql = `SELECT albums.name AS title,
+  albums.id as id,
+  albums.cover_image as image,
   artists.cover_image as artist_image,
-  artists.name AS artist,
-  albums.name AS album,
-  songs.length AS length,
-  songs.youtube_link AS link
-  FROM songs
-  JOIN artists ON artists.id=songs.artist_id
-  JOIN albums ON songs.album_id=albums.id
+  artists.name AS artist
+  FROM albums
+  JOIN artists ON artists.id=albums.artist_id
   WHERE albums.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
@@ -105,17 +127,29 @@ app.get("/album/:id", (req, response) => {
 });
 
 app.get("/artist/:id", (req, response) => {
-  let sql = `SELECT * FROM artists WHERE id = '${req.params.id}'`;
+  let sql = `SELECT artists.name AS title,
+  artists.id as id,
+  albums.id as album_id,
+  albums.cover_image as album_image,
+  artists.cover_image as artist_image,
+  albums.name AS album
+  FROM artists
+  JOIN albums ON artists.id=albums.artist_id
+  WHERE artists.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
-      res.length > 0 ? res : "We couldn't find the artist you were looking for"
+      res.length > 0 ? res : {"res":"We couldn't find the artist you were looking for"}
     );
   });
 });
 
 app.get("/playlist/:id", (req, response) => {
-  let sql = `SELECT * FROM playlists WHERE id = '${req.params.id}'`;
+  let sql = `SELECT playlists.name AS title,
+  playlists.id as id,
+  playlists.cover_image as image
+  FROM playlists
+  WHERE playlists.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
