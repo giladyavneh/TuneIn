@@ -62,8 +62,19 @@ app.get("/top_playlists", (req, response) => {
   });
 });
 
-app.get("/song/:title", (req, response) => {
-  let sql = `SELECT * FROM songs WHERE title LIKE '${req.params.title}'`;
+app.get("/song/:id", (req, response) => {
+  let sql = `SELECT songs.title AS title,
+  songs.id as id,
+  albums.cover_image as album_image,
+  artists.cover_image as artist_image,
+  artists.name AS artist,
+  albums.name AS album,
+  songs.length AS length,
+  songs.youtube_link AS link
+  FROM songs
+  JOIN artists ON artists.id=songs.artist_id
+  JOIN albums ON songs.album_id=albums.id
+  WHERE songs.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
@@ -72,8 +83,19 @@ app.get("/song/:title", (req, response) => {
   });
 });
 
-app.get("/album/:name", (req, response) => {
-  let sql = `SELECT * FROM albums WHERE name LIKE '${req.params.name}'`;
+app.get("/album/:id", (req, response) => {
+  let sql = `SELECT songs.title AS title,
+  songs.id as id,
+  albums.cover_image as album_image,
+  artists.cover_image as artist_image,
+  artists.name AS artist,
+  albums.name AS album,
+  songs.length AS length,
+  songs.youtube_link AS link
+  FROM songs
+  JOIN artists ON artists.id=songs.artist_id
+  JOIN albums ON songs.album_id=albums.id
+  WHERE albums.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
@@ -82,8 +104,8 @@ app.get("/album/:name", (req, response) => {
   });
 });
 
-app.get("/artist/:name", (req, response) => {
-  let sql = `SELECT * FROM artists WHERE name LIKE '${req.params.name}'`;
+app.get("/artist/:id", (req, response) => {
+  let sql = `SELECT * FROM artists WHERE id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
@@ -92,8 +114,8 @@ app.get("/artist/:name", (req, response) => {
   });
 });
 
-app.get("/playlist/:name", (req, response) => {
-  let sql = `SELECT * FROM playlists WHERE title LIKE '${req.params.name}'`;
+app.get("/playlist/:id", (req, response) => {
+  let sql = `SELECT * FROM playlists WHERE id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TopBanner from "./TopBanner";
 import DisplayCarusel from "./DisplayCarusel";
 import Avatar from "./Avatar";
-function Home() {
+function Home({quickPlay,quickAdd}) {
   const [topSongs, setTopSongs] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
   const [topAlbums, setTopAlbums]= useState([])
@@ -48,6 +48,8 @@ function Home() {
             artist={song.artist}
             image={song.album_image || song.artist_image}
             type="song"
+            quickAdd={quickAdd}
+            quickPlay={quickPlay}
           />
         ))}
       </DisplayCarusel>
@@ -59,6 +61,8 @@ function Home() {
             id={song.id}
             image={song.cover_image}
             type="artist"
+            quickAdd={quickAdd}
+            quickPlay={quickPlay}
           />
         ))}
       </DisplayCarusel>
@@ -71,6 +75,8 @@ function Home() {
             artist={song.artist}
             image={song.album_image}
             type="album"
+            quickAdd={quickAdd}
+            quickPlay={quickPlay}
           />
         ))}
       </DisplayCarusel>
@@ -82,6 +88,8 @@ function Home() {
             id={song.id}
             image={song.cover_image}
             type="playlist"
+            quickAdd={quickAdd}
+            quickPlay={quickPlay}
           />
         ))}
       </DisplayCarusel>

@@ -1,18 +1,33 @@
 import React, { useEffect, useState } from "react";
-import Home from "./Home"
+import Home from "./Home";
 import MediaPlayer from "./MediaPlayer";
-function App(){
-    const [playingNow,setPlayingNow]=useState()
-    const [mediaPlays,setMediaPlays]=useState()
-    useEffect(async ()=>{let songs=await fetch("/top_songs").then(res=>res.json())
-setPlayingNow(songs)},[])
-    useEffect(()=>setMediaPlays(true),[playingNow])
-    return(
-        <div>
-            <Home/>
-            {mediaPlays?<MediaPlayer songs={playingNow} closePlayer={()=>setMediaPlays(false)}/>:""}
-        </div>
-    )
+function App() {
+  const [playingNow, setPlayingNow] = useState();
+  const [mediaPlays, setMediaPlays] = useState(false);
+  useEffect(() => {if(playingNow)setMediaPlays(true)}, [playingNow]);
+
+  async function quickAdd(id,type){
+    let data=await fetch(`/${type}/${id}`).then(res=>res.json())
+    setPlayingNow(playlist=>playlist?playlist.concat(data):data)
+  }
+  async function quickPlay(id,type){
+    let data=await fetch(`/${type}/${id}`).then(res=>res.json())
+    setPlayingNow(data)
+  }
+
+  return (
+    <div>
+      <Home quickAdd={quickAdd} quickPlay={quickPlay}/>
+      {mediaPlays ? (
+        <MediaPlayer
+          songs={playingNow}
+          closePlayer={() => setMediaPlays(false)}
+        />
+      ) : (
+        ""
+      )}
+    </div>
+  );
 }
 
 export default App;

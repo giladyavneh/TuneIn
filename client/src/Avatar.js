@@ -18,6 +18,14 @@ function Avatar(props) {
       idImage = "https://www.flaticon.com/svg/static/icons/svg/929/929493.svg";
       break;
   }
+  function quickPlay(e){
+    e.stopPropagation()
+    props.quickPlay(props.id,props.type)
+  }
+  function quickAdd(e){
+    e.stopPropagation()
+    props.quickAdd(props.id,props.type)
+  }
   return (
     <div
       className="Avatar"
@@ -35,6 +43,14 @@ function Avatar(props) {
         : ` | ${props.artist}`}
       <div className="identifier">
         <img src={idImage} />
+        {props.type==="artist"?"":<div className="quickActions">
+          <div className="quickAdd" onClick={quickAdd}>
+            <img src="https://www.flaticon.com/svg/static/icons/svg/1417/1417434.svg"/>
+          </div>
+          <div className="quickPlay" onClick={quickPlay}>
+            <img src="https://www.flaticon.com/svg/static/icons/svg/727/727245.svg"/>
+          </div>
+        </div>}
       </div>
     </div>
   );
