@@ -1,0 +1,6 @@
+.SearchBar input{
+    margin: 0px;
+    position: relative;
+    top: 2.5px;
+    height: 100%;
+}

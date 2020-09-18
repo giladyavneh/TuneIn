@@ -1,5 +1,6 @@
 import React from "react";
 import "./Avatar.css";
+import {BrowserRouter, Route, Link, Switch} from "react-router-dom";
 
 function Avatar(props) {
   let idImage;
@@ -19,14 +20,18 @@ function Avatar(props) {
       break;
   }
   function quickPlay(e){
+    e.preventDefault()
     e.stopPropagation()
     props.quickPlay(props.id,props.type)
   }
   function quickAdd(e){
+    e.preventDefault()
     e.stopPropagation()
+    console.log(e.target)
     props.quickAdd(props.id,props.type)
   }
   return (
+  <Link to={`${props.type==="artist"?`artistpage/${props.id}`:`playlistpage/${props.type}/${props.id}`}`}>
     <div
       className="Avatar"
       style={{
@@ -53,6 +58,7 @@ function Avatar(props) {
         </div>}
       </div>
     </div>
+  </Link>
   );
 }
 

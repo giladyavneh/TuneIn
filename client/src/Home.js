@@ -8,31 +8,43 @@ function Home({quickPlay,quickAdd}) {
   const [topAlbums, setTopAlbums]= useState([])
   const [topPlaylists, setTopPlaylists]=useState([])
   useEffect(
-    () =>
-      fetch("/top_songs")
+    () =>{
+    async function getData(){
+      let topsongs= await fetch("/top_songs")
         .then((res) => res.json())
-        .then((res) => setTopSongs(res)),
+      setTopSongs(topsongs)}
+      getData()
+    },
     []
   );
   useEffect(
-    () =>
-      fetch("/top_artists")
+    () =>{
+    async function getData(){
+     let topartists=await fetch("/top_artists")
         .then((res) => res.json())
-        .then((res) => setTopArtists(res)),
+      setTopArtists(topartists)}
+      getData()
+    },
     []
   );
   useEffect(
-    () =>
-      fetch("/top_albums")
+    () =>{
+    async function getData(){
+      let topalbums= await fetch("/top_albums")
         .then((res) => res.json())
-        .then((res) => setTopAlbums(res)),
+      setTopAlbums(topalbums)}
+      getData()
+    },
     []
   );
   useEffect(
-    () =>
-      fetch("/top_playlists")
+    () =>{
+    async function getData(){
+     let topplaylists=await fetch("/top_playlists")
         .then((res) => res.json())
-        .then((res) => setTopPlaylists(res)),
+      setTopPlaylists(topplaylists)}
+      getData()
+    },
     []
   );
 
@@ -93,6 +105,7 @@ function Home({quickPlay,quickAdd}) {
           />
         ))}
       </DisplayCarusel>
+      <div id="filler"></div>
     </div>
   );
 }

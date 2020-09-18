@@ -11,7 +11,7 @@ function SongButton({title,artist,album,length,index,play,id}){
                 <div>{title}</div>
                 <div className="metadata">{artist} | {album}</div>
             </div>
-            <div className="player">
+            <div className="playerDetails">
                 {length} <button onClick={()=>play(index)}>PLAY</button> 
             </div>
         </div>

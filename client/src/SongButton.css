@@ -9,10 +9,11 @@
     grid-template-columns: auto min-content;
     column-gap: 5px;
 }
-.info, .player{
+.info, .playerDetails{
     background-image: inherit;
     white-space: nowrap;
 }
+
 .info{
     overflow-x: hidden;
     

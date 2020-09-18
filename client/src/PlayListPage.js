@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import "./ArtistPage.css";
-import Avatar from "./Avatar";
 import SongListItem from "./SongListItem";
 
-function PlayListPage({id,quickAdd,quickPlay,type}) {
+function PlayListPage({quickAdd,quickPlay}) {
+    const type=useParams().type
+    const id=useParams().id
     const [data,setData]=useState()
     const [artistsSongs,setArtistsSongs]=useState()
     useEffect( ()=> {
@@ -42,6 +44,7 @@ function PlayListPage({id,quickAdd,quickPlay,type}) {
       addToLine={quickAdd}
       addToPlaylist={addToPlaylist}
       />):""}
+      <div id="filler"></div>
     </div>
   );
 }

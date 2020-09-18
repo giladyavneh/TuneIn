@@ -3,13 +3,14 @@ import "./ArtistPage.css";
 import Avatar from "./Avatar";
 import DisplayCarusel from "./DisplayCarusel"
 import SongListItem from "./SongListItem";
+import {match, useLocation, useParams} from "react-router-dom";
 
-function ArtistPage({id,quickAdd,quickPlay}) {
+function ArtistPage({quickAdd,quickPlay}) {
+    const id=useParams().id
     const [data,setData]=useState()
     const [artistsSongs,setArtistsSongs]=useState()
     useEffect( ()=> {
         let getData=async()=>{
-            console.log(id)
         let data=await fetch(`/song?artist=${id}`).then(res=>res.json())
         console.log(data)
         setArtistsSongs(data)
@@ -51,6 +52,7 @@ function ArtistPage({id,quickAdd,quickPlay}) {
       addToLine={quickAdd}
       addToPlaylist={addToPlaylist}
       />):""}
+      <div id="filler"></div>
     </div>
   );
 }
