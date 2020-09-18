@@ -27,6 +27,16 @@ function Player({ song,next,minimized, previous, opener}) {
     let now=player.getCurrentTime()
     player.seekTo(now+10)
   }
+  function urlQuery(url){
+    try{
+      let uri=new URL(url);
+      console.log( uri.searchParams.get('v'))
+      return uri.searchParams.get('v')
+    }
+    catch{
+      return url
+    }
+  }
   return (
     <div id="Player" className={minimized?"minimized":""} style={{padding:minimized?"0px":"10px"}}>
       <div className="songInfo">
@@ -37,7 +47,7 @@ function Player({ song,next,minimized, previous, opener}) {
       </div>
       <div>
         <YouTube
-          videoId={song?song.link:"link"}
+          videoId={song?urlQuery(song.link):"link"}
           opts={{width:"200", height:"115", playerVars:{autoplay:1}}}
           onReady={(e)=>setPlayer(e.target)}
           onStateChange={(e)=>e.target.getPlayerState()===1?setPlaying(true):setPlaying(false)}
