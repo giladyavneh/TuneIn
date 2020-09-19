@@ -27,10 +27,10 @@ function App() {
         <Route exact path="/">
           <Home quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
-        <Route path="/artistpage/:id">
+        <Route exact path="/artistpage/:id">
           <ArtistPage quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
-        <Route path="/playlistpage/:type/:id">
+        <Route exact path="/playlistpage/:type/:id">
           <PlayListPage quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
         {mediaPlays ? (

@@ -1,8 +1,9 @@
 import React from "react";
 import "./Avatar.css";
-import {BrowserRouter, Route, Link, Switch} from "react-router-dom";
+import {BrowserRouter, Route, Link, Switch, useHistory} from "react-router-dom";
 
 function Avatar(props) {
+  const History=useHistory()
   let idImage;
   switch (props.type) {
     case "song":
@@ -31,7 +32,7 @@ function Avatar(props) {
     props.quickAdd(props.id,props.type)
   }
   return (
-  <Link to={`${props.type==="artist"?`artistpage/${props.id}`:`playlistpage/${props.type}/${props.id}`}`}>
+  <Link onClick={()=>History.location.pathname='/'} to={`${props.type==="artist"?`artistpage/${props.id}`:`playlistpage/${props.type}/${props.id}`}`}>
     <div
       className="Avatar"
       style={{

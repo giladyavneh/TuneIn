@@ -1,11 +1,17 @@
 import React from "react";
 import "./NavBar.css";
-import {Link} from "react-router-dom";
+import {Link, Redirect, useHistory} from "react-router-dom";
 import SearchBar from "./SearchBar";
 
 function NavBar(){
+    const History=useHistory()
+    console.log(History)
     function serchResults(e){
         console.log(e.target.value)
+    }
+    function redirecting(id,type){
+        History.location.pathname='/'
+        History.push(`${type==='artist'?'artistpage':`playlistpage/${type}`}/${id}`)
     }
     return(
         <div className="NavBar">
@@ -23,7 +29,7 @@ function NavBar(){
             <div className="navButton add">
             <img src="https://www.flaticon.com/svg/static/icons/svg/565/565264.svg"/>
             </div>
-            <SearchBar style={{height:"10px"}}/>
+            <SearchBar onChoose={redirecting} type={["song","artist","album","playlist"]} style={{height:"15px", width:"180px", margin:"0px 10px"}}/>
         </div>
     )
 }

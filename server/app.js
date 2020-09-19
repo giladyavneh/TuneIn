@@ -13,6 +13,15 @@ DataBase.connect((err, res) => {
   console.log("DataBase connected...");
 });
 
+const sqlPromise=(sqlQuery)=>{
+  return new Promise((resolve,reject)=>{
+    DataBase.query(sqlQuery,(err,res)=>{
+      if (err) reject(err)
+      resolve(res)
+    })
+  })
+}
+
 app.get("/top_songs", (req, response) => {
   let sql = `SELECT songs.title AS title,
   songs.id as id,
@@ -159,6 +168,64 @@ app.get("/playlist/:id", (req, response) => {
     );
   });
 });
+
+app.get(`/search`,(req, response)=>{
+   let {songs,artists,albums,playlists}=req.query;
+   let promises=[]
+     if (songs){
+       promises.push(sqlPromise(`SELECT songs.title as title,
+            songs.id as id,
+            'song' as type,
+            artists.name as artist,
+            albums.name as album,
+            albums.cover_image as image,
+            artists.cover_image as artist_image
+            FROM songs
+            JOIN artists ON songs.artist_id=artists.id
+            JOIN albums ON songs.album_id=albums.id
+            WHERE songs.title LIKE '${songs}%%'`)
+      )
+     }
+  if (artists){
+    promises.push(sqlPromise(`SELECT artists.name as title,
+    'artist' as type,
+    artists.id as id,
+    artists.cover_image as image
+    FROM artists
+    WHERE artists.name LIKE '${artists}%%'`)
+    )
+  }
+  if (albums){
+    promises.push(sqlPromise(`SELECT albums.name as title,
+    'album' as type,
+    albums.id as id,
+    albums.cover_image as image,
+    artists.cover_image as artist_image
+    FROM albums
+    JOIN artists ON albums.artist_id=artists.id
+    WHERE albums.name LIKE '${albums}%%'`)
+    )
+  }
+  if (playlists){
+    promises.push(sqlPromise(`SELECT playlists.name as title,
+    'playlist' as type,
+    playlists.id as id,
+    playlists.cover_image as image
+    FROM playlists
+    WHERE playlists.name LIKE '${playlists}%%'`)
+    )
+  }
+Promise.all(promises).then(resolved=>{
+  let result={};
+  resolved.forEach(arr=>{
+    if (arr.length>0){
+      result[arr[0].type]=arr
+    }
+  })
+  response.send(result)
+})
+
+})
 
 app.post("/artist", (req,response)=>{
     let sql="INSERT INTO artists SET ?"

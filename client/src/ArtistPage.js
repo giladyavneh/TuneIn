@@ -16,7 +16,7 @@ function ArtistPage({quickAdd,quickPlay}) {
         setArtistsSongs(data)
         }
         getData()
-    },[])
+    },[id])
     useEffect( ()=> {
         let getData=async()=>{
         let data=await fetch(`/artist/${id}`).then(res=>res.json())
@@ -24,7 +24,7 @@ function ArtistPage({quickAdd,quickPlay}) {
         setData(data)
         }
         getData()
-    },[])
+    },[id])
     function addToPlaylist(id){
         console.log("need to add functionality")
     }
