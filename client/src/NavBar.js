@@ -9,7 +9,7 @@ function NavBar(){
     function serchResults(e){
         console.log(e.target.value)
     }
-    function redirecting(id,type){
+    function redirecting({id,type}){
         History.location.pathname='/'
         History.push(`${type==='artist'?'artistpage':`playlistpage/${type}`}/${id}`)
     }
@@ -26,10 +26,12 @@ function NavBar(){
             <div className="navButton librarys">
                 <img src="https://www.flaticon.com/svg/static/icons/svg/1262/1262120.svg"/>
             </div>
+            <Link to="/addContent">
             <div className="navButton add">
             <img src="https://www.flaticon.com/svg/static/icons/svg/565/565264.svg"/>
             </div>
-            <SearchBar onChoose={redirecting} type={["song","artist","album","playlist"]} style={{height:"15px", width:"180px", margin:"0px 10px"}}/>
+            </Link>
+            <SearchBar clean={true} onChoose={redirecting} type={["song","artist","album","playlist"]} style={{height:"15px", width:"180px", margin:"0px 10px"}}/>
         </div>
     )
 }

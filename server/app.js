@@ -32,8 +32,8 @@ app.get("/top_songs", (req, response) => {
   songs.length AS length,
   songs.youtube_link AS link
   FROM songs
-  JOIN artists ON artists.id=songs.artist_id
-  JOIN albums ON songs.album_id=albums.id
+  LEFT JOIN artists ON artists.id=songs.artist_id
+  LEFT JOIN albums ON songs.album_id=albums.id
   LIMIT 20`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
@@ -88,7 +88,8 @@ app.get("/song",(req,response)=>{
   ${field==="playlist"?
   `JOIN songs_in_playlist ON songs.id=songs_in_playlist.song_id
   JOIN playlists ON songs_in_playlist.playlist_id=playlists.id`:""}
-  WHERE ${field}s.id = '${id}'`;
+  WHERE ${field}s.id = '${id}'
+  ${field==='album'?'ORDER BY songs.track_number':""}`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
@@ -143,7 +144,7 @@ app.get("/artist/:id", (req, response) => {
   artists.cover_image as artist_image,
   albums.name AS album
   FROM artists
-  JOIN albums ON artists.id=albums.artist_id
+  LEFT JOIN albums ON artists.id=albums.artist_id
   WHERE artists.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
@@ -200,6 +201,7 @@ app.get(`/search`,(req, response)=>{
     'album' as type,
     albums.id as id,
     albums.cover_image as image,
+    artists.name as artist,
     artists.cover_image as artist_image
     FROM albums
     JOIN artists ON albums.artist_id=artists.id
@@ -244,7 +246,7 @@ app.post("/album", (req,response)=>{
 })
 
 app.post("/song", (req,response)=>{
-  let sql="INSERT INTO albums SET ?"
+  let sql="INSERT INTO songs SET ?"
   DataBase.query(sql,req.body,(err,res)=>{
       if (err) throw err;
       response.send(res)

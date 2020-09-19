@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./SearchBar.css"
 import SearchResult from "./searchResult";
 
-function SearchBar({style,type,onChoose}){
+function SearchBar({style,type,onChoose,clean}){
     const [searchResults, setSearchResults]=useState({})
     const [focused, setFocused]=useState(false)
+    const inputRef=useRef()
     function showResults(query,types){
         let searchObj={}
         console.log(types)
@@ -12,6 +13,12 @@ function SearchBar({style,type,onChoose}){
         let urlQuery=new URLSearchParams(searchObj)
         console.log(urlQuery.toString())
         fetch(`/search?${urlQuery}`).then(res=>res.json()).then(res=>setSearchResults(res))
+    }
+    function choose({title,image,artist,album,id,clicked,type}){
+        clean?inputRef.current.value="":inputRef.current.value=title
+        inputRef.current.blur()
+        setFocused(false)
+        onChoose({title,image,artist,album,id,clicked,type})
     }
     let resultsDiv=<div className="resultsTab">
         {Object.keys(searchResults).length===0?
@@ -31,13 +38,13 @@ function SearchBar({style,type,onChoose}){
                     album={title.album||""}
                     id={title.id}
                     type={x}
-                    clicked={onChoose}/>
+                    clicked={choose}/>
                 )}</div>);
         })()}
     </div>
     return(
     <div className="SearchBar" style={style}>
-        <input onBlur={()=>Object.keys(searchResults).length===0?setFocused(false):""} onFocus={()=>setFocused(true)} onChange={e=>showResults(e.target.value,type)}/>
+        <input ref={inputRef} onBlur={()=>Object.keys(searchResults).length===0?setFocused(false):""} onFocus={()=>setFocused(true)} onChange={e=>showResults(e.target.value,type)}/>
         {focused?resultsDiv:""}
     </div>
     )

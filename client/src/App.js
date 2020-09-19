@@ -6,6 +6,7 @@ import ArtistPage from "./ArtistPage";
 import PlayListPage from "./PlayListPage";
 import {BrowserRouter, Switch, Route, Link, match} from "react-router-dom";
 import NavBar from "./NavBar";
+import AddContent from "./AddContent";
 function App() {
   const [playingNow, setPlayingNow] = useState();
   const [mediaPlays, setMediaPlays] = useState(false);
@@ -33,6 +34,7 @@ function App() {
         <Route exact path="/playlistpage/:type/:id">
           <PlayListPage quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
+        <Route path="/addcontent" component={AddContent}/>
         {mediaPlays ? (
           <MediaPlayer
             songs={playingNow}

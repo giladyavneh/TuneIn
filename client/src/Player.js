@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import "./Player.css";
 import YouTube from "react-youtube";
 import Controller from "./Controller";
+function urlQuery(url){
+  try{
+    let uri=new URL(url);
+    console.log( uri.searchParams.get('v'))
+    return uri.searchParams.get('v')
+  }
+  catch{
+    return url
+  }
+}
 
 function Player({ song,next,minimized, previous, opener}) {
   const [player,setPlayer]=useState()
@@ -27,16 +37,7 @@ function Player({ song,next,minimized, previous, opener}) {
     let now=player.getCurrentTime()
     player.seekTo(now+10)
   }
-  function urlQuery(url){
-    try{
-      let uri=new URL(url);
-      console.log( uri.searchParams.get('v'))
-      return uri.searchParams.get('v')
-    }
-    catch{
-      return url
-    }
-  }
+  
   return (
     <div id="Player" className={minimized?"minimized":""} style={{padding:minimized?"0px":"10px"}}>
       <div className="songInfo">
@@ -61,4 +62,4 @@ function Player({ song,next,minimized, previous, opener}) {
   );
 }
 
-export default Player;
+export {Player as default, urlQuery};
