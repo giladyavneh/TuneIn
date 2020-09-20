@@ -3,12 +3,8 @@ import "./NavBar.css";
 import {Link, Redirect, useHistory} from "react-router-dom";
 import SearchBar from "./SearchBar";
 
-function NavBar(){
+function NavBar({user}){
     const History=useHistory()
-    console.log(History)
-    function serchResults(e){
-        console.log(e.target.value)
-    }
     function redirecting({id,type}){
         History.location.pathname='/'
         History.push(`${type==='artist'?'artistpage':`playlistpage/${type}`}/${id}`)
@@ -16,7 +12,7 @@ function NavBar(){
     return(
         <div className="NavBar">
             <div className="login">
-                hello user
+                hello {`${user.username}`||`guest`}
             </div>
             <Link to="/">
             <div className="navButton homePage">

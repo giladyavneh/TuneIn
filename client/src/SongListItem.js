@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SongListItem.css"
 
-function SongListItem({title,artist,album,length,addToLine,play,id, addToPlaylist}){
+function SongListItem({title,artist,album,length,addToLine,play,id,liked,likeIt, addToPlaylist}){
         return(
         <div className="SongListItem">
             <div className="info">
@@ -13,6 +13,7 @@ function SongListItem({title,artist,album,length,addToLine,play,id, addToPlaylis
                 <button className="addToLine" onClick={()=>addToLine(id,"song")}><img alt="addToLine" src="https://www.flaticon.com/svg/static/icons/svg/1417/1417434.svg"/></button>
                 <button className="addToPlaylist" onClick={()=>addToPlaylist(id)}><img alt="addToPlayList" src="https://www.flaticon.com/svg/static/icons/svg/565/565264.svg"/></button>
                 <button className="play" onClick={()=>play(id,"song")}><img alt="play" src="https://www.flaticon.com/svg/static/icons/svg/727/727245.svg"></img></button>
+                <button className="like" onClick={()=>likeIt(id,"song")}><img alt="like" src={liked?"https://www.flaticon.com/svg/static/icons/svg/833/833386.svg":"https://www.flaticon.com/svg/static/icons/svg/833/833300.svg"}></img></button>
                 
             </div>
         </div>

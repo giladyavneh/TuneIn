@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import "./ArtistPage.css";
 import SongListItem from "./SongListItem";
 
-function PlayListPage({quickAdd,quickPlay}) {
+function PlayListPage({quickAdd,quickPlay,likeIt}) {
     const type=useParams().type
     const id=useParams().id
     const [data,setData]=useState()
@@ -43,6 +43,8 @@ function PlayListPage({quickAdd,quickPlay}) {
       play={quickPlay}
       addToLine={quickAdd}
       addToPlaylist={addToPlaylist}
+      liked={x.liked}
+      likeIt={likeIt}
       />):""}
       <div id="filler"></div>
     </div>

@@ -5,7 +5,7 @@ import DisplayCarusel from "./DisplayCarusel"
 import SongListItem from "./SongListItem";
 import {match, useLocation, useParams} from "react-router-dom";
 
-function ArtistPage({quickAdd,quickPlay}) {
+function ArtistPage({quickAdd,quickPlay,likeIt}) {
     const id=useParams().id
     const [data,setData]=useState()
     const [artistsSongs,setArtistsSongs]=useState()
@@ -51,6 +51,8 @@ function ArtistPage({quickAdd,quickPlay}) {
       play={quickPlay}
       addToLine={quickAdd}
       addToPlaylist={addToPlaylist}
+      liked={x.liked}
+      likeIt={likeIt}
       />):""}
       <div id="filler"></div>
     </div>
