@@ -17,6 +17,10 @@ function Player({ song,next,minimized, previous, opener, count}) {
   const [isPlaying,setPlaying]=useState()
 
   useEffect(()=>{
+    count(song.id)
+  },[song])
+
+  useEffect(()=>{
     if(player){
       minimized?
       player.setSize(0, 0):
@@ -49,7 +53,7 @@ function Player({ song,next,minimized, previous, opener, count}) {
         <YouTube
           videoId={song?urlQuery(song.link):"link"}
           opts={{width:"200", height:"115", playerVars:{autoplay:1}}}
-          onReady={(e)=>{setPlayer(e.target); count(song.id)}}
+          onReady={(e)=>{setPlayer(e.target)}}
           onStateChange={(e)=>e.target.getPlayerState()===1?setPlaying(true):setPlaying(false)}
           onEnd={next}
         />

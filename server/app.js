@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 function cookieID(req,res,next){
-  userID=1;
+  req.userID=1;
   next()
 }
 
@@ -43,7 +43,10 @@ app.get("/top_songs", (req, response) => {
   FROM songs
   LEFT JOIN artists ON artists.id=songs.artist_id
   LEFT JOIN albums ON songs.album_id=albums.id
-  ORDER BY 
+  LEFT JOIN (SELECT song_id, SUM(is_liked) AS likes, SUM(play_count) AS plays
+  FROM user_song_interaction GROUP BY song_id) AS interactions
+  ON interactions.song_id=songs.id
+  ORDER BY interactions.likes DESC, interactions.plays DESC
   LIMIT 20`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
@@ -102,7 +105,7 @@ app.get("/song", (req, response) => {
   JOIN playlists ON songs_in_playlist.playlist_id=playlists.id`
       : ""
   }
-  LEFT JOIN user_song_interaction ON user_song_interaction.user_id=${userID}
+  LEFT JOIN user_song_interaction ON user_song_interaction.user_id=${req.userID}
   AND user_song_interaction.song_id=songs.id
   WHERE ${field}s.id = '${id}'
   ${field === "album" ? "ORDER BY songs.track_number" : ""}`;
@@ -283,17 +286,19 @@ app.post("/playlist", (req, response) => {
 });
 
 app.put("/interaction/:user_id/:song_id", async (req, response) => {
+  console.log(req)
   let updateSql = `UPDATE user_song_interaction
   SET ${req.body.is_liked?`is_liked=NOT is_liked`:req.body.play_count?`play_count=play_count+1`:""}
   WHERE user_id=${req.params.user_id}
   AND song_id=${req.params.song_id}`;
   let insertSql=`INSERT INTO user_song_interaction SET ?`
-  
   DataBase.query(updateSql, (err, res) => {
     if (err) throw err;
+    
     if (res.affectedRows === 0) {
       let initial_values={}
       Object.keys(req.body).forEach(key=>initial_values[key]=1)
+      console.log(initial_values)
       DataBase.query(insertSql,{...req.params,...initial_values},(err,re)=>{
         if (err) throw err;
         response.send(re)

@@ -9,6 +9,7 @@ import NavBar from "./NavBar";
 import AddContent from "./AddContent";
 import NotFound from "./NotFound";
 import Auth from "./AuthApi";
+import LoginPage from "./LoginPage";
 function App() {
   const [user,setUser]=useState({
     username:"gilad",
@@ -33,6 +34,7 @@ function App() {
     setPlayingNow(data)
   }
   function likeIt(song_id,type){
+    console.log(song_id)
     let options={
       method:"PUT",
       body:JSON.stringify({is_liked:true}),
@@ -49,6 +51,7 @@ function App() {
     <NavBar user={user}/>
       <div>
         <Switch>
+        <Route path="/login" component={LoginPage}/>
         <Route exact path="/">
           <Home quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
