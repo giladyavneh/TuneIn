@@ -1,26 +1,35 @@
 const mysql = require("mysql");
 const express = require("express");
-const cors=require("cors")
+const cors = require("cors");
 const app = express();
-require('dotenv').config()
+require("dotenv").config();
 
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
 
-const DataBase = mysql.createConnection(JSON.parse(process.env.SQL_CREDENTIALS))
+function cookieID(req,res,next){
+  userID=1;
+  next()
+}
+
+app.use(cookieID)
+
+const DataBase = mysql.createConnection(
+  JSON.parse(process.env.SQL_CREDENTIALS)
+);
 DataBase.connect((err, res) => {
   if (err) throw err;
   console.log("DataBase connected...");
 });
 
-const sqlPromise=(sqlQuery)=>{
-  return new Promise((resolve,reject)=>{
-    DataBase.query(sqlQuery,(err,res)=>{
-      if (err) reject(err)
-      resolve(res)
-    })
-  })
-}
+const sqlPromise = (sqlQuery) => {
+  return new Promise((resolve, reject) => {
+    DataBase.query(sqlQuery, (err, res) => {
+      if (err) reject(err);
+      resolve(res);
+    });
+  });
+};
 
 app.get("/top_songs", (req, response) => {
   let sql = `SELECT songs.title AS title,
@@ -34,6 +43,7 @@ app.get("/top_songs", (req, response) => {
   FROM songs
   LEFT JOIN artists ON artists.id=songs.artist_id
   LEFT JOIN albums ON songs.album_id=albums.id
+  ORDER BY 
   LIMIT 20`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
@@ -71,32 +81,38 @@ app.get("/top_playlists", (req, response) => {
   });
 });
 
-app.get("/song",(req,response)=>{
-  let field=Object.keys(req.query)[0]
-  let id=Object.values(req.query)[0];
-  let sql=`SELECT songs.title AS title,
+app.get("/song", (req, response) => {
+  let field = Object.keys(req.query)[0];
+  let id = Object.values(req.query)[0];
+  let sql = `SELECT songs.title AS title,
   songs.id as id,
   albums.cover_image as album_image,
   artists.cover_image as artist_image,
   artists.name AS artist,
   albums.name AS album,
   songs.length AS length,
-  songs.youtube_link AS link
+  songs.youtube_link AS link,
+  user_song_interaction.is_liked AS liked
   FROM songs
   JOIN artists ON artists.id=songs.artist_id
   JOIN albums ON songs.album_id=albums.id
-  ${field==="playlist"?
-  `JOIN songs_in_playlist ON songs.id=songs_in_playlist.song_id
-  JOIN playlists ON songs_in_playlist.playlist_id=playlists.id`:""}
+  ${
+    field === "playlist"
+      ? `JOIN songs_in_playlist ON songs.id=songs_in_playlist.song_id
+  JOIN playlists ON songs_in_playlist.playlist_id=playlists.id`
+      : ""
+  }
+  LEFT JOIN user_song_interaction ON user_song_interaction.user_id=${userID}
+  AND user_song_interaction.song_id=songs.id
   WHERE ${field}s.id = '${id}'
-  ${field==='album'?'ORDER BY songs.track_number':""}`;
+  ${field === "album" ? "ORDER BY songs.track_number" : ""}`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
       res.length > 0 ? res : "We couldn't find the song you were looking for"
     );
   });
-})
+});
 
 app.get("/song/:id", (req, response) => {
   let sql = `SELECT songs.title AS title,
@@ -149,7 +165,9 @@ app.get("/artist/:id", (req, response) => {
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(
-      res.length > 0 ? res : {"res":"We couldn't find the artist you were looking for"}
+      res.length > 0
+        ? res
+        : { res: "We couldn't find the artist you were looking for" }
     );
   });
 });
@@ -170,11 +188,12 @@ app.get("/playlist/:id", (req, response) => {
   });
 });
 
-app.get(`/search`,(req, response)=>{
-   let {songs,artists,albums,playlists}=req.query;
-   let promises=[]
-     if (songs){
-       promises.push(sqlPromise(`SELECT songs.title as title,
+app.get(`/search`, (req, response) => {
+  let { songs, artists, albums, playlists } = req.query;
+  let promises = [];
+  if (songs) {
+    promises.push(
+      sqlPromise(`SELECT songs.title as title,
             songs.id as id,
             'song' as type,
             artists.name as artist,
@@ -185,19 +204,21 @@ app.get(`/search`,(req, response)=>{
             JOIN artists ON songs.artist_id=artists.id
             JOIN albums ON songs.album_id=albums.id
             WHERE songs.title LIKE '${songs}%%'`)
-      )
-     }
-  if (artists){
-    promises.push(sqlPromise(`SELECT artists.name as title,
+    );
+  }
+  if (artists) {
+    promises.push(
+      sqlPromise(`SELECT artists.name as title,
     'artist' as type,
     artists.id as id,
     artists.cover_image as image
     FROM artists
     WHERE artists.name LIKE '${artists}%%'`)
-    )
+    );
   }
-  if (albums){
-    promises.push(sqlPromise(`SELECT albums.name as title,
+  if (albums) {
+    promises.push(
+      sqlPromise(`SELECT albums.name as title,
     'album' as type,
     albums.id as id,
     albums.cover_image as image,
@@ -206,132 +227,176 @@ app.get(`/search`,(req, response)=>{
     FROM albums
     JOIN artists ON albums.artist_id=artists.id
     WHERE albums.name LIKE '${albums}%%'`)
-    )
+    );
   }
-  if (playlists){
-    promises.push(sqlPromise(`SELECT playlists.name as title,
+  if (playlists) {
+    promises.push(
+      sqlPromise(`SELECT playlists.name as title,
     'playlist' as type,
     playlists.id as id,
     playlists.cover_image as image
     FROM playlists
     WHERE playlists.name LIKE '${playlists}%%'`)
-    )
+    );
   }
-Promise.all(promises).then(resolved=>{
-  let result={};
-  resolved.forEach(arr=>{
-    if (arr.length>0){
-      result[arr[0].type]=arr
-    }
-  })
-  response.send(result)
-})
+  Promise.all(promises).then((resolved) => {
+    let result = {};
+    resolved.forEach((arr) => {
+      if (arr.length > 0) {
+        result[arr[0].type] = arr;
+      }
+    });
+    response.send(result);
+  });
+});
 
-})
+app.post("/artist", (req, response) => {
+  let sql = "INSERT INTO artists SET ?";
+  DataBase.query(sql, req.body, (err, res) => {
+    if (err) throw err;
+    response.send(res);
+  });
+});
 
-app.post("/artist", (req,response)=>{
-    let sql="INSERT INTO artists SET ?"
-    DataBase.query(sql,req.body,(err,res)=>{
+app.post("/album", (req, response) => {
+  let sql = "INSERT INTO albums SET ?";
+  DataBase.query(sql, req.body, (err, res) => {
+    if (err) throw err;
+    response.send(res);
+  });
+});
+
+app.post("/song", (req, response) => {
+  let sql = "INSERT INTO songs SET ?";
+  DataBase.query(sql, req.body, (err, res) => {
+    if (err) throw err;
+    response.send(res);
+  });
+});
+
+app.post("/playlist", (req, response) => {
+  let sql = "INSERT INTO playlists SET ?";
+  DataBase.query(sql, req.body, (err, res) => {
+    if (err) throw err;
+    response.send(res);
+  });
+});
+
+app.put("/interaction/:user_id/:song_id", async (req, response) => {
+  let updateSql = `UPDATE user_song_interaction
+  SET ${req.body.is_liked?`is_liked=NOT is_liked`:req.body.play_count?`play_count=play_count+1`:""}
+  WHERE user_id=${req.params.user_id}
+  AND song_id=${req.params.song_id}`;
+  let insertSql=`INSERT INTO user_song_interaction SET ?`
+  
+  DataBase.query(updateSql, (err, res) => {
+    if (err) throw err;
+    if (res.affectedRows === 0) {
+      let initial_values={}
+      Object.keys(req.body).forEach(key=>initial_values[key]=1)
+      DataBase.query(insertSql,{...req.params,...initial_values},(err,re)=>{
         if (err) throw err;
-        response.send(res)
-    })
-})
+        response.send(re)
+      })
+    }
+    else response.send(res)
+  });
+});
 
-app.post("/album", (req,response)=>{
-  let sql="INSERT INTO albums SET ?"
-  DataBase.query(sql,req.body,(err,res)=>{
-      if (err) throw err;
-      response.send(res)
-  })
-})
-
-app.post("/song", (req,response)=>{
-  let sql="INSERT INTO songs SET ?"
-  DataBase.query(sql,req.body,(err,res)=>{
-      if (err) throw err;
-      response.send(res)
-  })
-})
-
-app.post("/playlist", (req,response)=>{
-  let sql="INSERT INTO playlists SET ?"
-  DataBase.query(sql,req.body,(err,res)=>{
-      if (err) throw err;
-      response.send(res)
-  })
-})
-
-app.post("/interaction/:user_id/:song_id",async (req,response)=>{
-  DataBase.query(`UPDATE user_song_interaction
-  SET is_liked=true
-  WHERE user_id=1
-  AND song_id=1`,(err,res)=>{
-    response.send(res)
-  })
-})
-
-app.put("/album/:id",(req,response)=>{
-  let sql=`UPDATE albums SET ? WHERE id=${req.params.id}`
-  DataBase.query(sql,req.body,(err,res)=>{
+app.put("/album/:id", (req, response) => {
+  let sql = `UPDATE albums SET ? WHERE id=${req.params.id}`;
+  DataBase.query(sql, req.body, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the album you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the album you were looking for"
+    );
+  });
+});
 
-app.put("/song/:id",(req,response)=>{
-  let sql=`UPDATE songs SET ? WHERE id=${req.params.id}`
-  DataBase.query(sql,req.body,(err,res)=>{
+app.put("/song/:id", (req, response) => {
+  let sql = `UPDATE songs SET ? WHERE id=${req.params.id}`;
+  DataBase.query(sql, req.body, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the song you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the song you were looking for"
+    );
+  });
+});
 
-app.put("/artist/:id",(req,response)=>{
-  let sql=`UPDATE artists SET ? WHERE id=${req.params.id}`
-  DataBase.query(sql,req.body,(err,res)=>{
+app.put("/artist/:id", (req, response) => {
+  let sql = `UPDATE artists SET ? WHERE id=${req.params.id}`;
+  DataBase.query(sql, req.body, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the artist you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the artist you were looking for"
+    );
+  });
+});
 
-app.put("/playlist/:id",(req,response)=>{
-  let sql=`UPDATE playlists SET ? WHERE id=${req.params.id}`
-  DataBase.query(sql,req.body,(err,res)=>{
+app.put("/playlist/:id", (req, response) => {
+  let sql = `UPDATE playlists SET ? WHERE id=${req.params.id}`;
+  DataBase.query(sql, req.body, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the playlist you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the playlist you were looking for"
+    );
+  });
+});
 
-app.delete("/artist/:id",(req,response)=>{
-  let sql=`DELETE FROM artists WHERE id=${req.params.id}`
-  DataBase.query(sql,(err,res)=>{
+app.delete("/artist/:id", (req, response) => {
+  let sql = `DELETE FROM artists WHERE id=${req.params.id}`;
+  DataBase.query(sql, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the artist you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the artist you were looking for"
+    );
+  });
+});
 
-app.delete("/playlist/:id",(req,response)=>{
-  let sql=`DELETE FROM playlists WHERE id=${req.params.id}`
-  DataBase.query(sql,(err,res)=>{
+app.delete("/playlist/:id", (req, response) => {
+  let sql = `DELETE FROM playlists WHERE id=${req.params.id}`;
+  DataBase.query(sql, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the playlist you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the playlist you were looking for"
+    );
+  });
+});
 
-app.delete("/song/:id",(req,response)=>{
-  let sql=`DELETE FROM songs WHERE id=${req.params.id}`
-  DataBase.query(sql,(err,res)=>{
+app.delete("/song/:id", (req, response) => {
+  let sql = `DELETE FROM songs WHERE id=${req.params.id}`;
+  DataBase.query(sql, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the song you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the song you were looking for"
+    );
+  });
+});
 
-app.delete("/album/:id",(req,response)=>{
-  let sql=`DELETE FROM albums WHERE id=${req.params.id}`
-  DataBase.query(sql,(err,res)=>{
+app.delete("/album/:id", (req, response) => {
+  let sql = `DELETE FROM albums WHERE id=${req.params.id}`;
+  DataBase.query(sql, (err, res) => {
     if (err) throw err;
-    response.send(res.affectedRows>0?res:"We couldn't find the album you were looking for")
-  })
-})
+    response.send(
+      res.affectedRows > 0
+        ? res
+        : "We couldn't find the album you were looking for"
+    );
+  });
+});
 
 module.exports = app;

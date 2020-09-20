@@ -8,6 +8,7 @@ import {BrowserRouter, Switch, Route, Link, match} from "react-router-dom";
 import NavBar from "./NavBar";
 import AddContent from "./AddContent";
 import NotFound from "./NotFound";
+import Auth from "./AuthApi";
 function App() {
   const [user,setUser]=useState({
     username:"gilad",
@@ -31,12 +32,20 @@ function App() {
     let data=await fetch(`/song?${type}=${id}`).then(res=>res.json())
     setPlayingNow(data)
   }
-  function likeIt(song_id){
-    console.log(song_id)
+  function likeIt(song_id,type){
+    let options={
+      method:"PUT",
+      body:JSON.stringify({is_liked:true}),
+      headers:{
+          'Content-Type':'application/json'
+      }
+  }
+  fetch(`/interaction/${user.id}/${song_id}`, options)
   }
 
   return (
     <BrowserRouter>
+    <Auth.Provider value={{user,setUser}}>
     <NavBar user={user}/>
       <div>
         <Switch>
@@ -61,6 +70,7 @@ function App() {
           ""
         )}
       </div>
+      </Auth.Provider>
     </BrowserRouter>
   );
 }

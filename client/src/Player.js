@@ -12,7 +12,7 @@ function urlQuery(url){
   }
 }
 
-function Player({ song,next,minimized, previous, opener}) {
+function Player({ song,next,minimized, previous, opener, count}) {
   const [player,setPlayer]=useState()
   const [isPlaying,setPlaying]=useState()
 
@@ -49,7 +49,7 @@ function Player({ song,next,minimized, previous, opener}) {
         <YouTube
           videoId={song?urlQuery(song.link):"link"}
           opts={{width:"200", height:"115", playerVars:{autoplay:1}}}
-          onReady={(e)=>setPlayer(e.target)}
+          onReady={(e)=>{setPlayer(e.target); count(song.id)}}
           onStateChange={(e)=>e.target.getPlayerState()===1?setPlaying(true):setPlaying(false)}
           onEnd={next}
         />

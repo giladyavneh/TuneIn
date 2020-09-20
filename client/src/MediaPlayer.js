@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './MediaPlayer.css';
 import PlayListPlayer from "./PlayListPlayer";
 import Player from "./Player";
+import Auth from './AuthApi';
 
 function MediaPlayer({songs,closePlayer}) {
   const noMoreSongs={
@@ -11,13 +12,28 @@ function MediaPlayer({songs,closePlayer}) {
   const [currentSong, setCurrentSong]=useState()
   // const [songs, setSongs]=useState()
   const [minimized,setMinimized]=useState()
+  const {user}=useContext(Auth)
+
+  function count(song_id){
+    let options={
+      method:"PUT",
+      body:JSON.stringify({play_count:true}),
+      headers:{
+          'Content-Type':'application/json'
+      }
+  }
+  
+  fetch(`/interaction/${user.id}/${song_id}`, options)
+  }
 
 useEffect(()=>{if(songs) setCurrentSong(songs[0])},[songs])
   function play(key){
     let current=songs[key]||noMoreSongs
     current.index=key
     setCurrentSong(current)
+    if (current.id) count(current.id)
   }
+
   function next(){
     let ind=songs.findIndex(song=>song.title===currentSong.title)
     play(ind+1)
@@ -31,7 +47,7 @@ useEffect(()=>{if(songs) setCurrentSong(songs[0])},[songs])
     <div className={minimized?"minimized":"wrapper"}>
       <div className={minimized?"minimized":"MediaPlayer"}>
         {minimized?"":topBar}
-        {currentSong?<Player opener={()=>setMinimized(false)} minimized={minimized} previous={previous} song={currentSong} next={next}/>:""}
+        {currentSong?<Player count={count} opener={()=>setMinimized(false)} minimized={minimized} previous={previous} song={currentSong} next={next}/>:""}
         {minimized?"":<PlayListPlayer songs={songs} play={play}/>}
       </div>
     </div>
