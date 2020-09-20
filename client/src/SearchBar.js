@@ -8,10 +8,8 @@ function SearchBar({style,type,onChoose,clean}){
     const inputRef=useRef()
     function showResults(query,types){
         let searchObj={}
-        console.log(types)
         types.forEach(element => searchObj[element+'s']=query);
         let urlQuery=new URLSearchParams(searchObj)
-        console.log(urlQuery.toString())
         fetch(`/search?${urlQuery}`).then(res=>res.json()).then(res=>setSearchResults(res))
     }
     function choose({title,image,artist,album,id,clicked,type}){

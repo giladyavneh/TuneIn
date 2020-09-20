@@ -20,12 +20,10 @@ useEffect(()=>{if(songs) setCurrentSong(songs[0])},[songs])
   }
   function next(){
     let ind=songs.findIndex(song=>song.title===currentSong.title)
-    console.log(ind)
     play(ind+1)
   }
   function previous(){
     let ind=songs.findIndex(song=>song.title===currentSong.title)
-    console.log(ind)
     play(ind-1)
   }
   let topBar=<div id="playerTop"><button onClick={closePlayer}>x</button><button onClick={()=>setMinimized(true)}>-</button></div>

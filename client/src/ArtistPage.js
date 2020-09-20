@@ -12,7 +12,6 @@ function ArtistPage({quickAdd,quickPlay,likeIt}) {
     useEffect( ()=> {
         let getData=async()=>{
         let data=await fetch(`/song?artist=${id}`).then(res=>res.json())
-        console.log(data)
         setArtistsSongs(data)
         }
         getData()
@@ -20,7 +19,6 @@ function ArtistPage({quickAdd,quickPlay,likeIt}) {
     useEffect( ()=> {
         let getData=async()=>{
         let data=await fetch(`/artist/${id}`).then(res=>res.json())
-        console.log(data)
         setData(data)
         }
         getData()

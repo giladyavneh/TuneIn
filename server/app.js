@@ -261,6 +261,15 @@ app.post("/playlist", (req,response)=>{
   })
 })
 
+app.post("/interaction/:user_id/:song_id",async (req,response)=>{
+  DataBase.query(`UPDATE user_song_interaction
+  SET is_liked=true
+  WHERE user_id=1
+  AND song_id=1`,(err,res)=>{
+    response.send(res)
+  })
+})
+
 app.put("/album/:id",(req,response)=>{
   let sql=`UPDATE albums SET ? WHERE id=${req.params.id}`
   DataBase.query(sql,req.body,(err,res)=>{

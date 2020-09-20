@@ -31,8 +31,8 @@ function App() {
     let data=await fetch(`/song?${type}=${id}`).then(res=>res.json())
     setPlayingNow(data)
   }
-  function likeIt(){
-    console.log('like')
+  function likeIt(song_id){
+    console.log(song_id)
   }
 
   return (

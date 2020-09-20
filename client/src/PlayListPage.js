@@ -10,9 +10,7 @@ function PlayListPage({quickAdd,quickPlay,likeIt}) {
     const [artistsSongs,setArtistsSongs]=useState()
     useEffect( ()=> {
         let getData=async()=>{
-            console.log(id)
         let data=await fetch(`/song?${type}=${id}`).then(res=>res.json())
-        console.log(data)
         setArtistsSongs(data)
         }
         getData()
@@ -20,7 +18,6 @@ function PlayListPage({quickAdd,quickPlay,likeIt}) {
     useEffect( ()=> {
         let getData=async()=>{
         let data=await fetch(`/${type}/${id}`).then(res=>res.json())
-        console.log(data)
         setData(data)
         }
         getData()

@@ -16,7 +16,6 @@ function AddContent(){
             break;
         case "album":
             currentCard=<AddAlbum/>
-            console.log("albums")
             break;
     }
     return(

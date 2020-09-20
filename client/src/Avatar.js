@@ -28,7 +28,6 @@ function Avatar(props) {
   function quickAdd(e){
     e.preventDefault()
     e.stopPropagation()
-    console.log(e.target)
     props.quickAdd(props.id,props.type)
   }
   return (

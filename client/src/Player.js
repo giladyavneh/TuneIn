@@ -5,7 +5,6 @@ import Controller from "./Controller";
 function urlQuery(url){
   try{
     let uri=new URL(url);
-    console.log( uri.searchParams.get('v'))
     return uri.searchParams.get('v')
   }
   catch{
