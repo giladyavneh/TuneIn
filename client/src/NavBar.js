@@ -3,7 +3,7 @@ import "./NavBar.css";
 import {Link, Redirect, useHistory} from "react-router-dom";
 import SearchBar from "./SearchBar";
 
-function NavBar({user}){
+function NavBar({user,logout}){
     const History=useHistory()
     function redirecting({id,type}){
         History.location.pathname='/'
@@ -12,7 +12,9 @@ function NavBar({user}){
     return(
         <div className="NavBar">
             <div className="login">
-                hello {`${user.username}`||`guest`}
+                Hello {`${user.username}`||`guest`}<br/>
+                <button className="logoutButton" onClick={logout}>Logout</button>
+                
             </div>
             <Link to="/">
             <div className="navButton homePage">

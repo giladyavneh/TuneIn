@@ -3,16 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const bcrypt=require("bcrypt")
 
 app.use(express.json());
 app.use(cors());
 
-function cookieID(req,res,next){
-  req.userID=1;
-  next()
-}
 
-app.use(cookieID)
 
 const DataBase = mysql.createConnection(
   JSON.parse(process.env.SQL_CREDENTIALS)
@@ -87,6 +83,7 @@ app.get("/top_playlists", (req, response) => {
 app.get("/song", (req, response) => {
   let field = Object.keys(req.query)[0];
   let id = Object.values(req.query)[0];
+  console.log(req.headers)
   let sql = `SELECT songs.title AS title,
   songs.id as id,
   albums.cover_image as album_image,
@@ -105,7 +102,7 @@ app.get("/song", (req, response) => {
   JOIN playlists ON songs_in_playlist.playlist_id=playlists.id`
       : ""
   }
-  LEFT JOIN user_song_interaction ON user_song_interaction.user_id=${req.userID}
+  LEFT JOIN user_song_interaction ON user_song_interaction.user_id=${req.headers['x-custom-header']}
   AND user_song_interaction.song_id=songs.id
   WHERE ${field}s.id = '${id}'
   ${field === "album" ? "ORDER BY songs.track_number" : ""}`;
@@ -284,6 +281,37 @@ app.post("/playlist", (req, response) => {
     response.send(res);
   });
 });
+
+app.post("/signin", (req, response)=>{
+  req.body.password=bcrypt.hashSync(req.body.password,10)
+  let sql="INSERT INTO users SET ?";
+  DataBase.query(sql,req.body, (err,res)=>{
+    if (err) return response.status(400).send(err);
+    response.send({idKey:bcrypt.hashSync(req.body.password,10),username:req.body.username})
+  })
+})
+
+app.post("/login",(req,response)=>{
+  let sql=`SELECT * FROM users WHERE username='${req.body.username}'`
+  DataBase.query(sql,(err,res)=>{
+    if (err) throw err;
+    if (res.length===0) return response.status(400).send({massage:"Wrong user name"})
+    return !bcrypt.compareSync(req.body.password,res[0].password)?
+    response.status(401).send({massage:"Wrong password"}):
+    response.send({idKey:bcrypt.hashSync(res[0].password,10),username:res[0].username})
+  })
+})
+
+app.post("/connect",(req,response)=>{
+  let sql=`SELECT * FROM users WHERE username='${req.body.username}'`
+  console.log(req.body)
+  DataBase.query(sql,(err,res)=>{
+    if (err||res.length===0) return response.status(500).send([]);
+    console.log(res)
+    return response.send(bcrypt.compareSync(res[0].password,req.body.idKey)?
+    res:[])
+  })
+})
 
 app.put("/interaction/:user_id/:song_id", async (req, response) => {
   console.log(req)

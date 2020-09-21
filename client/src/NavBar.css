@@ -12,8 +12,19 @@
 }
 .login{
     display: flex;
+    flex-direction: column;
     align-items: center;
     margin: 0px 2.5px;
+}
+.login .logoutButton{
+    display: block;
+    color: rgb(182, 182, 182);
+    background: none;
+    border: none;
+    align-self: flex-end;
+    padding: 2px 0px;
+    font-size: 12px;
+    cursor: pointer;
 }
 .navButton{
     display: flex;

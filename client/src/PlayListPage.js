@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./ArtistPage.css";
+import Auth from "./AuthApi";
 import SongListItem from "./SongListItem";
 
 function PlayListPage({quickAdd,quickPlay,likeIt}) {
@@ -8,9 +9,10 @@ function PlayListPage({quickAdd,quickPlay,likeIt}) {
     const id=useParams().id
     const [data,setData]=useState()
     const [artistsSongs,setArtistsSongs]=useState()
+    let {user}=useContext(Auth)
     useEffect( ()=> {
         let getData=async()=>{
-        let data=await fetch(`/song?${type}=${id}`).then(res=>res.json())
+        let data=await fetch(`/song?${type}=${id}`,{"headers":{'X-Custom-Header': String(user.id)}}).then(res=>res.json())
         setArtistsSongs(data)
         }
         getData()

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "./App.css"
 import Home from "./Home";
 import MediaPlayer from "./MediaPlayer";
@@ -10,18 +10,34 @@ import AddContent from "./AddContent";
 import NotFound from "./NotFound";
 import Auth from "./AuthApi";
 import LoginPage from "./LoginPage";
+import SignIn from "./SignIn";
+
+
 function App() {
-  const [user,setUser]=useState({
-    username:"gilad",
-    id:"1",
-    is_admin:"1"
-  })
+  const [loggedIn,setLoggedIn]=useState()
+  const [loading,setLoading]=useState(true)
+  const [user,setUser]=useState({  })
+  useEffect(()=>{
+    if(loading){
+      if(sessionStorage.getItem('idKey')!==null){
+        console.log("session")
+      autoConnect(sessionStorage.getItem('idKey'),sessionStorage.getItem('username'))
+      }
+      else if(localStorage.getItem('idKey')){
+        console.log("loacl")
+      autoConnect(localStorage.getItem('idKey'),localStorage.getItem('username'))
+      }
+      else setLoading(false)
+    }
+    
+  },[])
   const [playingNow, setPlayingNow] = useState();
   const [mediaPlays, setMediaPlays] = useState(false);
   useEffect(() => {if(playingNow)setMediaPlays(true)}, [playingNow]);
 
+  
   async function quickAdd(id,type){
-    let data=await fetch(`/song?${type}=${id}`).then(res=>res.json())
+    let data=await fetch(`/song?${type}=${id}`,{"headers":{'X-Custom-Header': String(user.id)}}).then(res=>res.json())
     let newSongs;
     if (playingNow){
       let titles=playingNow.map(song=>song.id)
@@ -29,10 +45,12 @@ function App() {
     }
     setPlayingNow(playlist=>playlist?playlist.concat(newSongs):data)
   }
+  
   async function quickPlay(id,type){
-    let data=await fetch(`/song?${type}=${id}`).then(res=>res.json())
+    let data=await fetch(`/song?${type}=${id}`,{"headers":{'X-Custom-Header': String(user.id)}}).then(res=>res.json())
     setPlayingNow(data)
   }
+  
   function likeIt(song_id,type){
     console.log(song_id)
     let options={
@@ -45,13 +63,52 @@ function App() {
   fetch(`/interaction/${user.id}/${song_id}`, options)
   }
 
+  async function autoConnect(idKey,username){
+    let content = { username,idKey };
+    let options = {
+      method: "POST",
+      body: JSON.stringify(content),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    await fetch("/connect",options).then(res=>res.json()).then(res=>{
+      console.log(res)
+      if(res.length===0){
+        setLoggedIn(false)
+        setUser({})
+      }
+      else{
+        console.log('imlogged')
+        setLoggedIn(true);
+        setUser({id:res[0].id,email:res[0].email,username:res[0].username,is_admin:res[0].is_admin})
+      }
+    })
+    setLoading(false)
+
+  }
+
   return (
     <BrowserRouter>
     <Auth.Provider value={{user,setUser}}>
-    <NavBar user={user}/>
+      {loading?
+      <div style={{ background: "rgb(60,60,60)", minHeight: "100vh"}}></div>:
+      !loggedIn?<>
+        <Route path="/login">
+          <LoginPage autoConnect={autoConnect}/>
+        </Route>
+        <Route path="/signup">
+          <SignIn autoConnect={autoConnect}/>
+        </Route>
+        <Route path="/">
+          <LoginPage autoConnect={autoConnect}/>
+        </Route>
+        </>
+      :<>
+      <NavBar user={user} logout={()=>{setUser({});setLoggedIn(false)}}/>
       <div>
         <Switch>
-        <Route path="/login" component={LoginPage}/>
+        
         <Route exact path="/">
           <Home quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
@@ -73,6 +130,9 @@ function App() {
           ""
         )}
       </div>
+      </>
+      }
+    
       </Auth.Provider>
     </BrowserRouter>
   );

@@ -2,3 +2,92 @@
     background-color: rgb(30,30,30);
     min-height: 100vh;
 }
+.background .content{
+    margin: auto;
+    max-width: 700px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    color: whitesmoke;
+}
+.background .content .titles{
+    text-align: center;
+}
+.background .content .card{
+    margin: 20px;
+    padding: 10px 10px 20px 10px;
+    background-color: rgb(53, 57, 65);
+    display: grid;
+    grid-template-columns: 65% 30%;
+    column-gap: 5%;
+    border-radius: 10px;
+    box-shadow: rgb(53, 57, 65) 0px 0px 5px;
+}
+.background .content .card .signUp input{
+    width: 100%;
+    height: 20px;
+    border-radius: 5px;
+}
+.background .content .card .signUp .alert{
+    color: red;
+}
+.background .content .card .submition{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 0px 0px 0px;
+    align-content: center;
+    align-items: center;
+}
+.background .content .card .submition .createUser{
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+    color:  rgb(180, 180, 180);
+    background-color: rgb(19, 18, 18);
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    justify-content: center;
+    align-items: center;
+}
+.background .content .card .submition .createUser img{
+    filter: invert(0.7);
+    height: 50%;
+    position: relative;
+    right: 3px;
+    margin: 5px;
+
+}
+.background .content .card .loginSubmit{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 0px 0px 0px;
+    align-content: center;
+    align-items: center;
+}
+.background .content .card .loginSubmit .createUser{
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+    color:  rgb(180, 180, 180);
+    background-color: rgb(19, 18, 18);
+    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    justify-content: center;
+    align-items: center;
+}
+.background .content .card .loginSubmit .createUser img{
+    filter: invert(0.7);
+    height: 50%;
+    position: relative;
+    right: 3px;
+    margin: 5px;
+
+}

@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import "./AddSong.css";
+import Auth from "./AuthApi";
 
-function AddAlbum() {
+function AddPlaylist() {
     const [name,setName]=useState()
     const [cover_image,setCoverImage]=useState()
     const [artist,SetArtist]=useState()
     const [artist_id,setArtistId]=useState()
     const History=useHistory()
     const [massage,setMassage]=useState()
+    let {user}=useContext(Auth)
+    let user_id=user.id
     function submit(e){
         e.stopPropagation()
-        if(name&&artist){
-            let content={name, artist_id, cover_image}
+        if(name){
+            let content={name, artist_id, user_id, cover_image}
             let options={
                 method:"POST",
                 body:JSON.stringify(content),
@@ -21,10 +24,10 @@ function AddAlbum() {
                     'Content-Type':'application/json'
                 }
             }
-            fetch('/album', options).then(res=>History.push('/'))
+            fetch('/playlist', options).then(res=>History.push('/'))
         }
         else{
-            setMassage("A Name and an Artist must be submitted!")
+            setMassage("A Name must be submitted!")
         }
     }
   return (
@@ -72,4 +75,4 @@ function AddAlbum() {
   );
 }
 
-export default AddAlbum;
+export default AddPlaylist;
