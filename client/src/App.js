@@ -85,7 +85,15 @@ function App() {
       }
     })
     setLoading(false)
+  }
 
+  function logout(){
+    setUser({});
+    setLoggedIn(false)
+    sessionStorage.removeItem('idKey')
+    sessionStorage.removeItem('username')
+    localStorage.removeItem('idKey')
+    localStorage.removeItem('username')
   }
 
   return (
@@ -93,7 +101,8 @@ function App() {
     <Auth.Provider value={{user,setUser}}>
       {loading?
       <div style={{ background: "rgb(60,60,60)", minHeight: "100vh"}}></div>:
-      !loggedIn?<>
+      !loggedIn?
+      <Switch>
         <Route path="/login">
           <LoginPage autoConnect={autoConnect}/>
         </Route>
@@ -103,9 +112,9 @@ function App() {
         <Route path="/">
           <LoginPage autoConnect={autoConnect}/>
         </Route>
-        </>
+        </Switch>
       :<>
-      <NavBar user={user} logout={()=>{setUser({});setLoggedIn(false)}}/>
+      <NavBar user={user} logout={logout}/>
       <div>
         <Switch>
         

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import "./log.css";
 import TopBanner from "./TopBanner";
 
@@ -8,6 +9,7 @@ function LoginPage({autoConnect}) {
   const [passwordMassage, setPasswordMassage] = useState();
   const [nameMassage, setNameMassage] = useState();
   const [rememberMe, setRememberMe] = useState();
+  const History=useHistory()
 
   async function login() {
     if (!Boolean(username) || !Boolean(password)) {
@@ -44,6 +46,8 @@ function LoginPage({autoConnect}) {
             sessionStorage.setItem(key, comecabk[key])
         }
         autoConnect(comecabk.idKey,comecabk.username)
+        History.push('/')
+        
       }
   }
 
