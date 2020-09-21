@@ -1,4 +1,27 @@
 .QuickPlaylistAdd{
     position: absolute;
-    background-image:linear-gradient(rgb(30,30,30),black);
+    background-color: rgb(59, 59, 59);
+    color: whitesmoke;
+    border-radius: 5px;
+}
+.QuickPlaylistAdd .toptab{
+    background-color: black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    direction: rtl;
+    font-size: 10px;
+    color: whitesmoke;
+    box-sizing: border-box;
+    cursor: default;
+}
+.QuickPlaylistAdd .playlistName{
+    padding: 1px 10px;
+    margin: 1px;
+    cursor: default;
+}
+.QuickPlaylistAdd .playlistName:hover{
+    background-color: rgb(41, 40, 40);
+}
+.QuickPlaylistAdd hr{
+    margin: 2px;
 }

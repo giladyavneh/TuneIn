@@ -91,7 +91,6 @@ app.get("/top_playlists", (req, response) => {
 app.get("/song", (req, response) => {
   let field = Object.keys(req.query)[0];
   let id = Object.values(req.query)[0];
-  console.log(req.headers)
   let sql = `SELECT songs.title AS title,
   songs.id as id,
   albums.cover_image as album_image,
@@ -210,6 +209,7 @@ app.get("/playlist", (req,response)=>{
   WHERE users_playlist.user_id='${req.query.user_id}'`
   DataBase.query(sql, (err,res)=>{
     if (err) throw err;
+    console.log(res)
     response.send(res)
   })
 })
@@ -320,6 +320,14 @@ app.post("/playlist", (req, response) => {
   });
 });
 
+app.post("/playlist/:playlist_id/:song_id",(req,response)=>{
+  let sql=`INSERT INTO songs_in_playlist SET ?`
+  DataBase.query(sql,req.params,(err,res)=>{
+    if (err) throw err;
+    response.send(res)
+  })
+})
+
 app.post("/signin", (req, response)=>{
   req.body.password=bcrypt.hashSync(req.body.password,10)
   let sql="INSERT INTO users SET ?";
@@ -342,17 +350,17 @@ app.post("/login",(req,response)=>{
 
 app.post("/connect",(req,response)=>{
   let sql=`SELECT * FROM users WHERE username='${req.body.username}'`
-  console.log(req.body)
+  
   DataBase.query(sql,(err,res)=>{
     if (err||res.length===0) return response.status(500).send([]);
-    console.log(res)
+    
     return response.send(bcrypt.compareSync(res[0].password,req.body.idKey)?
     res:[])
   })
 })
 
 app.put("/interaction/:user_id/:song_id", async (req, response) => {
-  console.log(req)
+  
   let updateSql = `UPDATE user_song_interaction
   SET ${req.body.is_liked?`is_liked=NOT is_liked`:req.body.play_count?`play_count=play_count+1`:""}
   WHERE user_id=${req.params.user_id}
@@ -364,7 +372,7 @@ app.put("/interaction/:user_id/:song_id", async (req, response) => {
     if (res.affectedRows === 0) {
       let initial_values={}
       Object.keys(req.body).forEach(key=>initial_values[key]=1)
-      console.log(initial_values)
+      
       DataBase.query(insertSql,{...req.params,...initial_values},(err,re)=>{
         if (err) throw err;
         response.send(re)

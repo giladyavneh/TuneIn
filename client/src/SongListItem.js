@@ -34,7 +34,7 @@ function SongListItem({
             src="https://www.flaticon.com/svg/static/icons/svg/1417/1417434.svg"
           />
         </button>
-        <button className="addToPlaylist" onClick={() => addToPlaylist(id)}>
+        <button className="addToPlaylist" onClick={(e) => addToPlaylist(e, e.pageX, e.pageY, id)}>
           <img
             alt="addToPlayList"
             src="https://www.flaticon.com/svg/static/icons/svg/565/565264.svg"
