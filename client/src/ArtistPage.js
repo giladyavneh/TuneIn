@@ -5,6 +5,7 @@ import DisplayCarusel from "./DisplayCarusel"
 import SongListItem from "./SongListItem";
 import {match, useLocation, useParams} from "react-router-dom";
 import Auth from "./AuthApi";
+import QuickPlaylistAdd from "./QuickPlaylistAdd";
 
 function ArtistPage({quickAdd,quickPlay,likeIt}) {
     const id=useParams().id

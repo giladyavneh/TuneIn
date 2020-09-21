@@ -94,16 +94,20 @@ function Home({quickPlay,quickAdd}) {
       </DisplayCarusel>
       <h1>Top Playlists</h1>
       <DisplayCarusel>
-      {topPlaylists.map((song) => (
+      {topPlaylists.map((song) => {
+        console.log(song);
+        return(
           <Avatar
             title={song.name}
             id={song.id}
+            artist={song.artist}
             image={song.cover_image}
             type="playlist"
             quickAdd={quickAdd}
             quickPlay={quickPlay}
           />
-        ))}
+        )}
+        )}
       </DisplayCarusel>
       <div id="filler"></div>
     </div>

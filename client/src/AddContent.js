@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AddAlbum from "./AddAlbum";
 import AddArtist from "./AddArtist";
 import "./AddContent.css";
+import AddPlaylist from "./AddPlaylist";
 import AddSong from "./AddSong";
 
 function AddContent(){
@@ -17,6 +18,9 @@ function AddContent(){
         case "album":
             currentCard=<AddAlbum/>
             break;
+        case "playlist":
+            currentCard=<AddPlaylist/>
+            break;
     }
     return(
         <div className="AddContent">
@@ -25,7 +29,7 @@ function AddContent(){
                     <button onClick={()=>setCurrent("song")}>song</button>
                     <button onClick={()=>setCurrent("artist")}>artist</button>
                     <button onClick={()=>setCurrent("album")}>album</button>
-                    <button onClick={()=>{}}>playlist</button>
+                    <button onClick={()=>setCurrent("playlist")}>playlist</button>
                 </div>
                 <div className="content">
                     {currentCard}

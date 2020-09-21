@@ -9,7 +9,6 @@ app.use(express.json());
 app.use(cors());
 
 
-
 const DataBase = mysql.createConnection(
   JSON.parse(process.env.SQL_CREDENTIALS)
 );
@@ -73,7 +72,16 @@ app.get("/top_albums", (req, response) => {
 });
 
 app.get("/top_playlists", (req, response) => {
-  let sql = "SELECT * FROM playlists LIMIT 20";
+  let sql = `SELECT playlists.name AS name,
+  playlists.id as id,
+  playlists.cover_image as cover_image,
+  users.username as artist
+  FROM playlists
+  LEFT JOIN users_playlist
+  ON playlists.id=users_playlist.playlist_id
+  LEFT JOIN users
+  ON users.id=users_playlist.user_id
+  LIMIT 20`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
     response.send(res);
@@ -175,8 +183,13 @@ app.get("/artist/:id", (req, response) => {
 app.get("/playlist/:id", (req, response) => {
   let sql = `SELECT playlists.name AS title,
   playlists.id as id,
-  playlists.cover_image as image
+  playlists.cover_image as image,
+  users.username as artist
   FROM playlists
+  LEFT JOIN users_playlist
+  ON playlists.id=users_playlist.playlist_id
+  LEFT JOIN users
+  ON users.id=users_playlist.user_id
   WHERE playlists.id = '${req.params.id}'`;
   DataBase.query(sql, (err, res) => {
     if (err) throw err;
@@ -187,6 +200,19 @@ app.get("/playlist/:id", (req, response) => {
     );
   });
 });
+
+app.get("/playlist", (req,response)=>{
+  let sql=`SELECT playlists.name as name,
+  playlists.id as id
+  FROM playlists
+  JOIN users_playlist
+  ON playlists.id=users_playlist.playlist_id
+  WHERE users_playlist.user_id='${req.query.user_id}'`
+  DataBase.query(sql, (err,res)=>{
+    if (err) throw err;
+    response.send(res)
+  })
+})
 
 app.get(`/search`, (req, response) => {
   let { songs, artists, albums, playlists } = req.query;
@@ -275,9 +301,21 @@ app.post("/song", (req, response) => {
 });
 
 app.post("/playlist", (req, response) => {
-  let sql = "INSERT INTO playlists SET ?";
+  let sql = `INSERT INTO playlists SET name='${req.body.name}',
+  cover_image='${req.body.cover_image}'`;
   DataBase.query(sql, req.body, (err, res) => {
     if (err) throw err;
+    DataBase.query(`INSERT INTO users_playlist SET
+    user_id='${req.body.user_id}',
+    playlist_id='${res.insertId}'`)
+    if (req.body.songs.length>0){
+      let sql=`INSERT INTO songs_in_playlist
+      (song_id,playlist_id) VALUES `
+      let values=req.body.songs.map(song=>`(${song.id},${res.insertId})`)
+      DataBase.query(sql+values.join(),(err,res)=>{
+        if (err) throw err;
+      })
+    }
     response.send(res);
   });
 });

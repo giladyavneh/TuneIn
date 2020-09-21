@@ -44,7 +44,7 @@ function Avatar(props) {
       {props.type === "artist"
         ? ""
         : props.type === "playlist"
-        ? `|${props.user}`
+        ? `|${props.artist}`
         : ` | ${props.artist}`}
       <div className="identifier">
         <img src={idImage} />
