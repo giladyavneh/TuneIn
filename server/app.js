@@ -1,11 +1,15 @@
+console.log("start app")
 const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+
 const bcrypt=require("bcrypt")
+
 const DataBase=require("./DataBase")
+console.log("finish impoorts")
 const songs=require("./routes/songs")
-const artists=require("./routes/artists")
+const artists=require("./routes/artists.js")
 const albums=require("./routes/albums")
 const playlists=require("./routes/playlists")
 
@@ -199,5 +203,5 @@ app.put("/interaction/:user_id/:song_id", async (req, response) => {
     else response.send(res)
   });
 });
-
+console.log("finish app")
 module.exports = app;
