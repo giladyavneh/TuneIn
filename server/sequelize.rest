@@ -1,13 +1,13 @@
-POST http://localhost:5000/album
-Content-Type:application/json
+# POST http://localhost:5000/album
+# Content-Type:application/json
 
-{
-    "name":"Parachutes",
+# {
+#     "name":"Parachutes",
     
-    "artist_id":"1"
-}
+#     "artist_id":"1"
+# }
 
-# GET http://localhost:5000/album/2
+GET http://localhost:3001/album/2
 
 # PUT http://localhost:5000/artist/5
 # Content-Type:application/json
