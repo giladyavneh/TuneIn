@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "giladyavneh",
-    "database": "tuneinorm",
+    "database": "tunein",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
