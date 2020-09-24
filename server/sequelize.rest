@@ -1,0 +1,19 @@
+POST http://localhost:5000/album
+Content-Type:application/json
+
+{
+    "name":"Parachutes",
+    
+    "artist_id":"1"
+}
+
+# GET http://localhost:5000/album/2
+
+# PUT http://localhost:5000/artist/5
+# Content-Type:application/json
+
+# {
+#     "name":"Coldplay"
+# }
+
+# DELETE http://localhost:5000/artist/5
