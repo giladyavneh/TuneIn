@@ -32,7 +32,7 @@ function AddSong() {
     function submit(e){
         e.stopPropagation()
         if(youtube_link&&title&&length){
-            let content={title,artist_id,album_id,length,youtube_link,track_number}
+            let content={title,artist_id,album_id,length,youtubeLink:youtube_link,track_number}
             let options={
                 method:"POST",
                 body:JSON.stringify(content),

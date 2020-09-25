@@ -21,7 +21,7 @@ function MediaPlayer({ songs, closePlayer }) {
   function count(song_id) {
     let options = {
       method: "PUT",
-      body: JSON.stringify({ play_count: true }),
+      body: JSON.stringify({ playCount: true }),
       headers: {
         "Content-Type": "application/json",
       },

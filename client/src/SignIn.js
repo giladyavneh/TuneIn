@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import "./log.css";
 import TopBanner from "./TopBanner";
 
@@ -11,6 +12,7 @@ function SignIn({autoConnect}) {
   const [nameMassage, setNameMassage] = useState();
   const [emailMassage, setEmailMassage] = useState();
   const [rememberMe, setRememberMe] = useState();
+  const History=useHistory()
 
   function comparePasswords(compration) {
     setPasswordMassage(
@@ -55,7 +57,7 @@ function SignIn({autoConnect}) {
         setEmailMassage("This mail is already being used :(");
       } else
         setNameMassage(
-          "It seems like we have a problem with our connection..."
+          `It seems like we have a problem with our ${status==500?"server":"connection"}...`
         );
     }
     else{
@@ -63,7 +65,8 @@ function SignIn({autoConnect}) {
             if(rememberMe)localStorage.setItem(key, comecabk[key])
             sessionStorage.setItem(key, comecabk[key])
         }
-    autoConnect(comecabk.idKey,comecabk.username)
+    await autoConnect(comecabk.idKey,comecabk.username)
+    History.push('/')
     }
   }
 

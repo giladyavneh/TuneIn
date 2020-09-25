@@ -1,57 +1,57 @@
-const express=require("express")
-const app=express.Router()
-const DataBase=require("../DataBase")
+const express = require("express");
+const app = express.Router();
+const DataBase = require("../DataBase");
+const { Artist, Song, Album, Interaction, User } = require("../models");
 
-app.get("/:id", (req, response) => {
-    let sql = `SELECT artists.name AS title,
-    artists.id as id,
-    albums.id as album_id,
-    albums.cover_image as album_image,
-    artists.cover_image as artist_image,
-    albums.name AS album
-    FROM artists
-    LEFT JOIN albums ON artists.id=albums.artist_id
-    WHERE artists.id = '${req.params.id}'`;
-    DataBase.query(sql, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.length > 0
-          ? res
-          : { res: "We couldn't find the artist you were looking for" }
-      );
+app.get("/:id", async (req, response, next) => {
+  try {
+    let res = await Artist.findByPk(req.params.id, {
+      include: [
+        Album,
+        { model: Song, include: [Album, { model: User, through:{
+          attributes:['isLiked'],
+          where:{isLiked:true}
+        }}] },
+      ],
     });
-  });
+    response.send(
+      res != null
+        ? res
+        : { res: "We couldn't find the artist you were looking for" }
+    );
+  } catch (e) {
+    next(e);
+  }
+});
 
-  app.post("/", (req, response) => {
-    let sql = "INSERT INTO artists SET ?";
-    DataBase.query(sql, req.body, (err, res) => {
-      if (err) return response.status(500);
-      response.send(res);
-    });
-  });
+app.post("/", async (req, response, next) => {
+  try {
+    response.send(await Artist.create(req.body));
+  } catch (e) {
+    next(e);
+  }
+});
 
-  app.put("/:id", (req, response) => {
-    let sql = `UPDATE artists SET ? WHERE id=${req.params.id}`;
-    DataBase.query(sql, req.body, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.affectedRows > 0
-          ? res
-          : "We couldn't find the artist you were looking for"
-      );
-    });
-  });
+app.put("/:id", async (req, response, next) => {
+  try {
+    let res = await Artist.update(req.body, { where: { id: req.params.id } });
+    response.send(
+      res[0] > 0 ? res : "We couldn't find the artist you were looking for"
+    );
+  } catch (e) {
+    next(e);
+  }
+});
 
-  app.delete("/:id", (req, response) => {
-    let sql = `DELETE FROM artists WHERE id=${req.params.id}`;
-    DataBase.query(sql, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.affectedRows > 0
-          ? res
-          : "We couldn't find the artist you were looking for"
-      );
-    });
-  });
+app.delete("/:id", async (req, response, next) => {
+  try {
+    let res = await Artist.destroy({ where: { id: req.params.id } });
+    response.send(
+      res > 0 ? res : "We couldn't find the artist you were looking for"
+    );
+  } catch (e) {
+    next(e);
+  }
+});
 
-module.exports=app;
+module.exports = app;

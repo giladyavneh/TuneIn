@@ -10,22 +10,13 @@ import QuickPlaylistAdd from "./QuickPlaylistAdd";
 function ArtistPage({ quickAdd, quickPlay, likeIt }) {
   const id = useParams().id;
   const [data, setData] = useState();
-  const [artistsSongs, setArtistsSongs] = useState();
   const [minimenu, setMinimenu] = useState(null);
   const [miniPosition, setMiniPosition] = useState();
   let { user } = useContext(Auth);
+  
   useEffect(() => {
     let getData = async () => {
-      let data = await fetch(`/song?artist=${id}`, {
-        headers: { "X-Custom-Header": String(user.id) },
-      }).then((res) => res.json());
-      setArtistsSongs(data);
-    };
-    getData();
-  }, [id]);
-  useEffect(() => {
-    let getData = async () => {
-      let data = await fetch(`/artist/${id}`).then((res) => res.json());
+      let data = await fetch(`/artist/${id}`,{headers:{"X-Custom-Header":user.id}}).then((res) => res.json());
       setData(data);
     };
     getData();
@@ -42,21 +33,21 @@ function ArtistPage({ quickAdd, quickPlay, likeIt }) {
       style={{
         minHeight: "100vh",
         backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.5) 1%, black), url('${
-          data ? data[0].artist_image : ""
+          data ? data.coverImage : ""
         }')`,
       }}
     >
       <div className="coverImage">
-        <h1>{data ? data[0].title : ""}</h1>
+        <h1>{data ? data.name : ""}</h1>
       </div>
       <DisplayCarusel>
         {data
-          ? data.map((song) => (
+          ? data.Albums.map((song) => (
               <Avatar
-                title={song.album}
-                id={song.album_id}
-                artist={song.title}
-                image={song.album_image}
+                title={song.name}
+                id={song.id}
+                artist={data.name}
+                image={song.coverImage}
                 type="album"
                 quickAdd={quickAdd}
                 quickPlay={quickPlay}
@@ -64,12 +55,12 @@ function ArtistPage({ quickAdd, quickPlay, likeIt }) {
             ))
           : ""}
       </DisplayCarusel>
-      {artistsSongs
-        ? artistsSongs.map((x) => (
+      {data
+        ? data.Songs.map((x) => (
             <SongListItem
               title={x.title}
-              artist={x.artist}
-              album={x.album}
+              artist={data.name}
+              album={x.Album.name}
               length={x.length}
               id={x.id}
               play={quickPlay}

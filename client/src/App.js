@@ -4,7 +4,7 @@ import Home from "./Home";
 import MediaPlayer from "./MediaPlayer";
 import ArtistPage from "./ArtistPage";
 import PlayListPage from "./PlayListPage";
-import {BrowserRouter, Switch, Route, Link, match} from "react-router-dom";
+import {BrowserRouter, Switch, Route, Link, match, useHistory} from "react-router-dom";
 import NavBar from "./NavBar";
 import AddContent from "./AddContent";
 import NotFound from "./NotFound";
@@ -17,6 +17,7 @@ function App() {
   const [loggedIn,setLoggedIn]=useState()
   const [loading,setLoading]=useState(true)
   const [user,setUser]=useState({  })
+  const History=useHistory()
   useEffect(()=>{
     if(loading){
       if(sessionStorage.getItem('idKey')!==null){
@@ -55,7 +56,7 @@ function App() {
     console.log(song_id)
     let options={
       method:"PUT",
-      body:JSON.stringify({is_liked:true}),
+      body:JSON.stringify({isLiked:true}),
       headers:{
           'Content-Type':'application/json'
       }

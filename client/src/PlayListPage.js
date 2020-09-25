@@ -24,7 +24,9 @@ function PlayListPage({ quickAdd, quickPlay, likeIt }) {
   }, [id, type]);
   useEffect(() => {
     let getData = async () => {
+      console.log(type, id)
       let data = await fetch(`/${type}/${id}`).then((res) => res.json());
+      console.log(data)
       setData(data);
     };
     getData();
@@ -43,13 +45,13 @@ function PlayListPage({ quickAdd, quickPlay, likeIt }) {
       style={{
         minHeight: "100vh",
         backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.5) 1%, black), url('${
-          data ? data[0].image || data[0].artist_image : ""
+          data ? data.coverImage||data.Artist.coverImage||""  : ""
         }')`,
       }}
     >
       <div className="coverImage" style={{ minHeight: "40vh" }}>
-        <h1>{data ? data[0].title : ""}</h1>
-        <h2>{data ? data[0].artist : ""}</h2>
+        <h1>{data ? data.name||data.title : ""}</h1>
+        <h2>{data ? data.Artist.name : ""}</h2>
       </div>
       {artistsSongs
         ? artistsSongs.map((x) => (

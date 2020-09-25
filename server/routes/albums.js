@@ -1,54 +1,49 @@
 const express=require("express")
 const app=express.Router()
 const DataBase=require("../DataBase")
+const {Album}=require("../models");
 
-app.get("/:id", (req, response) => {
-    let sql = `SELECT albums.name AS title,
-    albums.id as id,
-    albums.cover_image as image,
-    artists.cover_image as artist_image,
-    artists.name AS artist
-    FROM albums
-    JOIN artists ON artists.id=albums.artist_id
-    WHERE albums.id = '${req.params.id}'`;
-    DataBase.query(sql, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.length > 0 ? res : "We couldn't find the album you were looking for"
-      );
-    });
+app.get("/:id", async (req, response,next) => {
+  try{
+    let res = await Album.findByPk(req.params.id,{include:'Artist'})
+    response.send(res != null ? res : "We couldn't find the album you were looking for")
+  } catch(e){
+    next(e)
+  }
   });
 
-  app.post("/", (req, response) => {
-    let sql = "INSERT INTO albums SET ?";
-    DataBase.query(sql, req.body, (err, res) => {
-      if (err) return response.status(500);
+  app.post("/", async (req, response, next) => {
+    try{
+      let res=await Album.create(req.body)
       response.send(res);
-    });
+    } catch (e){
+      next(e)
+    }
   });
 
-  app.put("/:id", (req, response) => {
-    let sql = `UPDATE albums SET ? WHERE id=${req.params.id}`;
-    DataBase.query(sql, req.body, (err, res) => {
-      if (err) return response.status(500);
+  app.put("/:id", async (req, response,next) => {
+    try{
+      let res= await Album.update(req.body,{where:{id:req.params.id}})
       response.send(
-        res.affectedRows > 0
+        res[0]>0
           ? res
           : "We couldn't find the album you were looking for"
       );
-    });
+    }catch(e){
+      next(e)
+    }
   });
 
-  app.delete("/:id", (req, response) => {
-    let sql = `DELETE FROM albums WHERE id=${req.params.id}`;
-    DataBase.query(sql, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.affectedRows > 0
-          ? res
-          : "We couldn't find the album you were looking for"
-      );
-    });
+  app.delete("/:id", async (req, response,next) => {
+    try{
+      let res= await Album.destroy({where:{id:req.params.id}})
+        response.send(
+          res > 0
+            ? res
+            : "We couldn't find the album you were looking for"
+        )}catch(e){
+          next(e)
+        }
   });
 
 module.exports=app;

@@ -2,19 +2,21 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
-const bcrypt=require("bcrypt")
-const DataBase=require("./DataBase")
-const songs=require("./routes/songs")
-const artists=require("./routes/artists")
-const albums=require("./routes/albums")
-const playlists=require("./routes/playlists")
+const bcrypt = require("bcrypt");
+const DataBase = require("./DataBase");
+const songs = require("./routes/songs");
+const artists = require("./routes/artists");
+const albums = require("./routes/albums");
+const playlists = require("./routes/playlists");
+const { User, Song, Interaction, Sequelize } = require("./models");
 
 app.use(express.json());
 app.use(cors());
-app.use("/song",songs);
+
+app.use("/song", songs);
 app.use("/artist", artists);
 app.use("/album", albums);
-app.use("/playlist", playlists)
+app.use("/playlist", playlists);
 
 const sqlPromise = (sqlQuery) => {
   return new Promise((resolve, reject) => {
@@ -149,55 +151,72 @@ app.get(`/search`, (req, response) => {
   });
 });
 
-app.post("/signin", (req, response)=>{
-  req.body.password=bcrypt.hashSync(req.body.password,10)
-  let sql="INSERT INTO users SET ?";
-  DataBase.query(sql,req.body, (err,res)=>{
-    if (err) return response.status(400).send(err);
-    response.send({idKey:bcrypt.hashSync(req.body.password,10),username:req.body.username})
-  })
-})
+app.post("/signin", async (req, response, next) => {
+  try {
+    await User.create(req.body);
+    response.send({
+      idKey: bcrypt.hashSync(req.body.password, 10),
+      username: req.body.username,
+    });
+  } catch (e) {
+    next(e);
+  }
+});
 
-app.post("/login",(req,response)=>{
-  let sql=`SELECT * FROM users WHERE username='${req.body.username}'`
-  DataBase.query(sql,(err,res)=>{
-    if (err) return response.status(500);
-    if (res.length===0) return response.status(400).send({massage:"Wrong user name"})
-    return !bcrypt.compareSync(req.body.password,res[0].password)?
-    response.status(401).send({massage:"Wrong password"}):
-    response.send({idKey:bcrypt.hashSync(res[0].password,10),username:res[0].username})
-  })
-})
+app.post("/login", async (req, response, next) => {
+  try {
+    let res = await User.findOne({ where: { username: req.body.username } });
+    if (res == null)
+      return response.status(400).send({ massage: "Wrong user name" });
+    return !bcrypt.compareSync(req.body.password, res.password)
+      ? response.status(401).send({ massage: "Wrong password" })
+      : response.send({
+          idKey: bcrypt.hashSync(res.password, 10),
+          username: res.username,
+        });
+  } catch (e) {
+    next(e);
+  }
+});
 
-app.post("/connect",(req,response)=>{
-  let sql=`SELECT * FROM users WHERE username='${req.body.username}'`
-  DataBase.query(sql,(err,res)=>{
-    if (err||res.length===0) return response.status(500).send([]);
-    return response.send(bcrypt.compareSync(res[0].password,req.body.idKey)?
-    res:[])
-  })
-})
+app.post("/connect", async (req, response, next) => {
+  try {
+    let res = await User.findAll({ where: { username: req.body.username } });
+    if (res.length === 0) return response.status(500).send([]);
+    return response.send(
+      bcrypt.compareSync(res[0].password, req.body.idKey) ? res : []
+    );
+  } catch (e) {
+    next(e);
+  }
+});
 
-app.put("/interaction/:user_id/:song_id", async (req, response) => {
-  let updateSql = `UPDATE user_song_interaction
-  SET ${req.body.is_liked?`is_liked=NOT is_liked`:req.body.play_count?`play_count=play_count+1`:""}
-  WHERE user_id=${req.params.user_id}
-  AND song_id=${req.params.song_id}`;
-  let insertSql=`INSERT INTO user_song_interaction SET ?`
-  DataBase.query(updateSql, (err, res) => {
-    if (err) return response.status(500);
-    
-    if (res.affectedRows === 0) {
-      let initial_values={}
-      Object.keys(req.body).forEach(key=>initial_values[key]=1)
-      
-      DataBase.query(insertSql,{...req.params,...initial_values},(err,re)=>{
-        if (err) return response.status(500);
-        response.send(re)
-      })
+app.put("/interaction/:user_id/:song_id", async (req, response, next) => {
+  try{
+    let exist=await Interaction.findOne({where:{songId:req.params.song_id,userId:req.params.user_id}});
+    if(exist){
+      if (req.body.isLiked) exist.update({isLiked:Sequelize.literal('NOT isLiked')});
+      if (req.body.playCount) exist.increment('playCount');
+      } else{
+        console.log(req.params.song_id,req.params.user_id)
+        Interaction.create({
+          userId: req.params.user_id,
+          songId: req.params.song_id,
+          isLiked: Boolean(req.body.isLiked),
+          playCount: Boolean(req.body.playCount)?1:0
+        })
+      }
+    } catch(e){
+      next(e)
     }
-    else response.send(res)
-  });
+});
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  return res
+    .status(500)
+    .send({ massage: "A server error has occured...", error });
+  next();
 });
 
 module.exports = app;
