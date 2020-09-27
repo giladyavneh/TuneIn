@@ -3,13 +3,13 @@ import SongButton from "./SongButton"
 
 function PlayListPlayer({songs,play}){
     
-    let songsInPlaylist=songs?songs.map(({title,artist,album,length,link},i,all)=><SongButton
+    let songsInPlaylist=songs?songs.map(({title,Artist,Album,length,link},i,all)=><SongButton
     key={i}
     index={i}
     play={play}
     title={title}
-    artist={artist}
-    album={album}
+    artist={Artist.name}
+    album={Album.name}
     length={length}
     link={link}/>)
     :""

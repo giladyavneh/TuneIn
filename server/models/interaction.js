@@ -11,23 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      
+      this.belongsTo(models.Song,{
+        foreignKey:"song_id"
+      });
+      this.belongsTo(models.User,{
+        foreignKey:"user_id"
+      })
     }
   };
   Interaction.init({
     userId: {
       type:DataTypes.INTEGER,
-      references:{
-        model:User,
-        key:'id'
-      }
+      
     },
     songId: {
       type:DataTypes.INTEGER,
-      references:{
-        model:Song,
-        key:'id'
-      }
+  
     },
     isLiked: DataTypes.BOOLEAN,
     playCount: DataTypes.INTEGER

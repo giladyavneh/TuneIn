@@ -15,17 +15,9 @@ function PlayListPage({ quickAdd, quickPlay, likeIt }) {
   let { user } = useContext(Auth);
   useEffect(() => {
     let getData = async () => {
-      let data = await fetch(`/song?${type}=${id}`, {
+      let data = await fetch(`/${type}/${id}`,{
         headers: { "X-Custom-Header": String(user.id) },
       }).then((res) => res.json());
-      setArtistsSongs(data);
-    };
-    getData();
-  }, [id, type]);
-  useEffect(() => {
-    let getData = async () => {
-      console.log(type, id)
-      let data = await fetch(`/${type}/${id}`).then((res) => res.json());
       console.log(data)
       setData(data);
     };
@@ -45,30 +37,43 @@ function PlayListPage({ quickAdd, quickPlay, likeIt }) {
       style={{
         minHeight: "100vh",
         backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.5) 1%, black), url('${
-          data ? data.coverImage||data.Artist.coverImage||""  : ""
+          data ? data.coverImage?data.coverImage:data.Artist?data.Artist.coverImage:"":""
         }')`,
       }}
     >
       <div className="coverImage" style={{ minHeight: "40vh" }}>
-        <h1>{data ? data.name||data.title : ""}</h1>
-        <h2>{data ? data.Artist.name : ""}</h2>
+        <h1>{data ? data.name? data.name: data.title?data.title : "":""}</h1>
+        <h2>{data ? data.Artist?data.Artist.name||data.Artist.username : "":""}</h2>
       </div>
-      {artistsSongs
-        ? artistsSongs.map((x) => (
+      {data
+        ? data.Songs?data.Songs.map((x) => (
             <SongListItem
               title={x.title}
-              artist={x.artist}
-              album={x.album}
+              artist={x.Artist.name}
+              album={x.Album.name}
               length={x.length}
               id={x.id}
               play={quickPlay}
               addToLine={quickAdd}
               addToPlaylist={addToPlaylist}
-              liked={x.liked}
+              liked={x.Interactions[0]?x.Interactions[0].isLiked:false}
               likeIt={likeIt}
             />
           ))
-        : ""}
+        : 
+          <SongListItem
+            title={data.title}
+            artist={data.Artist.name}
+            album={data.Album.name}
+            length={data.length}
+            id={data.id}
+            play={quickPlay}
+            addToLine={quickAdd}
+            addToPlaylist={addToPlaylist}
+            liked={data.Interactions[0]?data.Interactions[0].isLiked:false}
+            likeIt={likeIt}
+          />
+        :""}
       <div id="filler"></div>
       {minimenu != null ? (
         <QuickPlaylistAdd

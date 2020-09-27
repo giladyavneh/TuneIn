@@ -4,13 +4,13 @@ import "./AddSong.css";
 
 function AddArtist() {
     const [name,setName]=useState()
-    const [cover_image,setCoverImage]=useState()
+    const [coverImage,setCoverImage]=useState()
     const History=useHistory()
     const [massage,setMassage]=useState()
     function submit(e){
         e.stopPropagation()
         if(name){
-            let content={name, cover_image}
+            let content={name, coverImage}
             let options={
                 method:"POST",
                 body:JSON.stringify(content),
@@ -28,7 +28,7 @@ function AddArtist() {
     <div onClick={()=>setMassage("")}>
       <div className="preview">
         <div className="coverImage">
-          <img src={cover_image} />
+          <img src={coverImage} />
         </div>
         <div className="info">
           <h1 className="title"> {name} </h1>

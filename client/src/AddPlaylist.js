@@ -7,16 +7,16 @@ import PendingForPlaylist from "./PendingForPlaylist"
 
 function AddPlaylist() {
     const [name,setName]=useState()
-    const [cover_image,setCoverImage]=useState()
+    const [coverImage,setCoverImage]=useState()
     const [songs,setSongs]=useState([])
     const History=useHistory()
     const [massage,setMassage]=useState()
     let {user}=useContext(Auth)
-    let user_id=user.id
+    let authorId=user.id
     function submit(e){
         e.stopPropagation()
         if(name){
-            let content={name, user_id, cover_image, songs}
+            let content={name, authorId, coverImage, songs}
             let options={
                 method:"POST",
                 body:JSON.stringify(content),
@@ -48,7 +48,7 @@ function AddPlaylist() {
     <div onClick={()=>setMassage("")}>
       <div className="preview">
         <div className="coverImage">
-          <img src={cover_image} />
+          <img src={coverImage} />
         </div>
         <div className="info">
           <h1 className="title"> {name} </h1>

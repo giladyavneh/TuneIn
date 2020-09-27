@@ -3,12 +3,21 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const DataBase = require("./DataBase");
 const songs = require("./routes/songs");
 const artists = require("./routes/artists");
 const albums = require("./routes/albums");
 const playlists = require("./routes/playlists");
-const { User, Song, Interaction, Sequelize } = require("./models");
+const {
+  User,
+  Song,
+  Interaction,
+  Sequelize,
+  sequelize,
+  Artist,
+  Album,
+  Playlist,
+} = require("./models");
+const { Op } = require("sequelize");
 
 app.use(express.json());
 app.use(cors());
@@ -18,137 +27,175 @@ app.use("/artist", artists);
 app.use("/album", albums);
 app.use("/playlist", playlists);
 
-const sqlPromise = (sqlQuery) => {
-  return new Promise((resolve, reject) => {
-    DataBase.query(sqlQuery, (err, res) => {
-      if (err) reject(err);
-      resolve(res);
+app.get("/top_songs", async (req, response, next) => {
+  try {
+    let res = await Song.findAll({
+      include: [{ model: Interaction, attributes: [] }, Artist, Album],
+      group: "Song.id",
+      order: [
+        [sequelize.fn("sum", sequelize.col(`Interactions.is_liked`)), "DESC"],
+        [sequelize.fn("sum", sequelize.col(`Interactions.play_count`)), "DESC"],
+      ],
     });
-  });
-};
-
-app.get("/top_songs", (req, response) => {
-  let sql = `SELECT songs.title AS title,
-  songs.id as id,
-  albums.cover_image as album_image,
-  artists.cover_image as artist_image,
-  artists.name AS artist,
-  albums.name AS album,
-  songs.length AS length,
-  songs.youtube_link AS link
-  FROM songs
-  LEFT JOIN artists ON artists.id=songs.artist_id
-  LEFT JOIN albums ON songs.album_id=albums.id
-  LEFT JOIN (SELECT song_id, SUM(is_liked) AS likes, SUM(play_count) AS plays
-  FROM user_song_interaction GROUP BY song_id) AS interactions
-  ON interactions.song_id=songs.id
-  ORDER BY interactions.likes DESC, interactions.plays DESC
-  LIMIT 20`;
-  DataBase.query(sql, (err, res) => {
-    if (err) return response.status(500);
     response.send(res);
-  });
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.get("/top_artists", (req, response) => {
-  let sql = "SELECT * FROM artists LIMIT 20";
-  DataBase.query(sql, (err, res) => {
-    if (err) return response.status(500);
-    response.send(res);
-  });
-});
-
-app.get("/top_albums", (req, response) => {
-  let sql = `SELECT albums.name as name,
-  albums.cover_image as album_image,
-  albums.id as id,
-  artists.name as artist
-  FROM albums
-  JOIN artists ON artists.id=albums.artist_id
-  LIMIT 20`;
-  DataBase.query(sql, (err, res) => {
-    if (err) return response.status(500);
-    response.send(res);
-  });
-});
-
-app.get("/top_playlists", (req, response) => {
-  let sql = `SELECT playlists.name AS name,
-  playlists.id as id,
-  playlists.cover_image as cover_image,
-  users.username as artist
-  FROM playlists
-  LEFT JOIN users_playlist
-  ON playlists.id=users_playlist.playlist_id
-  LEFT JOIN users
-  ON users.id=users_playlist.user_id
-  LIMIT 20`;
-  DataBase.query(sql, (err, res) => {
-    if (err) return response.status(500);
-    response.send(res);
-  });
-});
-
-app.get(`/search`, (req, response) => {
-  let { songs, artists, albums, playlists } = req.query;
-  let promises = [];
-  if (songs) {
-    promises.push(
-      sqlPromise(`SELECT songs.title as title,
-            songs.id as id,
-            'song' as type,
-            artists.name as artist,
-            albums.name as album,
-            albums.cover_image as image,
-            artists.cover_image as artist_image
-            FROM songs
-            JOIN artists ON songs.artist_id=artists.id
-            JOIN albums ON songs.album_id=albums.id
-            WHERE songs.title LIKE '${songs}%%'`)
-    );
-  }
-  if (artists) {
-    promises.push(
-      sqlPromise(`SELECT artists.name as title,
-    'artist' as type,
-    artists.id as id,
-    artists.cover_image as image
-    FROM artists
-    WHERE artists.name LIKE '${artists}%%'`)
-    );
-  }
-  if (albums) {
-    promises.push(
-      sqlPromise(`SELECT albums.name as title,
-    'album' as type,
-    albums.id as id,
-    albums.cover_image as image,
-    artists.name as artist,
-    artists.cover_image as artist_image
-    FROM albums
-    JOIN artists ON albums.artist_id=artists.id
-    WHERE albums.name LIKE '${albums}%%'`)
-    );
-  }
-  if (playlists) {
-    promises.push(
-      sqlPromise(`SELECT playlists.name as title,
-    'playlist' as type,
-    playlists.id as id,
-    playlists.cover_image as image
-    FROM playlists
-    WHERE playlists.name LIKE '${playlists}%%'`)
-    );
-  }
-  Promise.all(promises).then((resolved) => {
-    let result = {};
-    resolved.forEach((arr) => {
-      if (arr.length > 0) {
-        result[arr[0].type] = arr;
-      }
+app.get("/top_artists", async (req, response, next) => {
+  try {
+    let res = await Artist.findAll({
+      include: [
+        {
+          model: Song,
+          attributes: [],
+          include: { model: Interaction, attributes: [] },
+        },
+      ],
+      group: "Artist.id",
+      order: [
+        [
+          sequelize.fn("sum", sequelize.col(`Songs.Interactions.is_liked`)),
+          "DESC",
+        ],
+        [
+          sequelize.fn("sum", sequelize.col(`Songs.Interactions.play_count`)),
+          "DESC",
+        ],
+      ],
     });
-    response.send(result);
-  });
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.get("/top_albums", async (req, response, next) => {
+  try {
+    let res = await Album.findAll({
+      include: [
+        Artist,
+        {
+          model: Song,
+          attributes: [],
+          include: { model: Interaction, attributes: [] },
+        },
+      ],
+      group: "Album.id",
+      order: [
+        [
+          sequelize.fn("sum", sequelize.col(`Songs.Interactions.is_liked`)),
+          "DESC",
+        ],
+        [
+          sequelize.fn("sum", sequelize.col(`Songs.Interactions.play_count`)),
+          "DESC",
+        ],
+      ],
+    });
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.get("/top_playlists", async (req, response, next) => {
+  try {
+    let res = await Playlist.findAll({
+      include: [
+        {
+          model: Song,
+          attributes: [],
+          include: { model: Interaction, attributes: [] },
+        },
+      ],
+      group: "Playlist.id",
+      order: [
+        [
+          sequelize.fn("sum", sequelize.col(`Songs.Interactions.is_liked`)),
+          "DESC",
+        ],
+        [
+          sequelize.fn("sum", sequelize.col(`Songs.Interactions.play_count`)),
+          "DESC",
+        ],
+      ],
+    });
+    let pendings = [];
+    for (let playlist of res) {
+      pendings.push(
+        playlist
+          .getUser({ attributes: [["username", "name"]] })
+          .then((res) => (playlist.dataValues.Artist = res))
+      );
+    }
+    await Promise.all(pendings);
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.get(`/search`, async (req, response) => {
+  try{
+    let { songs, artists, albums, playlists } = req.query;
+    let promises = [];
+    if (songs) {
+      promises.push(
+        Song.findAll({
+          include: [Artist, Album],
+          attributes:['title','id'],
+          where: { title: { [Op.like]: `${songs}%` } },
+        }).then((res) => {
+          res.forEach((x) => (x.dataValues.type = "song"));
+          return res;
+        })
+      );
+    }
+    if (artists) {
+      promises.push(
+        Artist.findAll({
+          attributes:[["name",'title'],'coverImage','id'],
+          where: { name: { [Op.like]: `${artists}%` } },
+        }).then((res) => {
+          res.forEach((x) => (x.dataValues.type = "artist"));
+          return res;
+        })
+      );
+    }
+    if (albums) {
+      promises.push(
+        Album.findAll({
+          include: Artist,
+          attributes:[["name",'title'],'coverImage','id'],
+          where:{name:{[Op.like]:`${albums}%`}},
+        }).then((res) => {
+          res.forEach((x) => (x.dataValues.type = "artist"));
+          return res;
+        })
+      );
+    }
+    if (playlists) {
+      promises.push(
+        Playlist.findAll({
+          attributes:[["name",'title'],'coverImage','id'],
+          where:{name:{[Op.like]:`${playlists}%`}},
+        })
+      );
+    }
+    Promise.all(promises).then((resolved) => {
+      let result = {};
+      resolved.forEach((arr) => {
+        if (arr.length > 0) {
+          result[arr[0].dataValues.type] = arr;
+        }
+      });
+      response.send(result);
+    });
+  } catch(e){
+    next(e)
+  }
 });
 
 app.post("/signin", async (req, response, next) => {
@@ -192,23 +239,26 @@ app.post("/connect", async (req, response, next) => {
 });
 
 app.put("/interaction/:user_id/:song_id", async (req, response, next) => {
-  try{
-    let exist=await Interaction.findOne({where:{songId:req.params.song_id,userId:req.params.user_id}});
-    if(exist){
-      if (req.body.isLiked) exist.update({isLiked:Sequelize.literal('NOT isLiked')});
-      if (req.body.playCount) exist.increment('playCount');
-      } else{
-        console.log(req.params.song_id,req.params.user_id)
-        Interaction.create({
-          userId: req.params.user_id,
-          songId: req.params.song_id,
-          isLiked: Boolean(req.body.isLiked),
-          playCount: Boolean(req.body.playCount)?1:0
-        })
-      }
-    } catch(e){
-      next(e)
+  try {
+    let exist = await Interaction.findOne({
+      where: { songId: req.params.song_id, userId: req.params.user_id },
+    });
+    if (exist) {
+      if (req.body.isLiked)
+        exist.update({ isLiked: Sequelize.literal("NOT is_liked") });
+      if (req.body.playCount) exist.increment("playCount");
+    } else {
+      console.log(req.params.song_id, req.params.user_id);
+      Interaction.create({
+        userId: req.params.user_id,
+        songId: req.params.song_id,
+        isLiked: Boolean(req.body.isLiked),
+        playCount: Boolean(req.body.playCount) ? 1 : 0,
+      });
     }
+  } catch (e) {
+    next(e);
+  }
 });
 
 app.use((error, req, res, next) => {

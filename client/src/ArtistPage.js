@@ -66,7 +66,7 @@ function ArtistPage({ quickAdd, quickPlay, likeIt }) {
               play={quickPlay}
               addToLine={quickAdd}
               addToPlaylist={addToPlaylist}
-              liked={x.liked}
+              liked={x.Interactions[0]?x.Interactions[0].isLiked:false}
               likeIt={likeIt}
             />
           ))

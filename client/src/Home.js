@@ -57,8 +57,8 @@ function Home({quickPlay,quickAdd}) {
           <Avatar
             title={song.title}
             id={song.id}
-            artist={song.artist}
-            image={song.album_image || song.artist_image}
+            artist={song.Artist?song.Artist.name:""}
+            image={song.Album.coverImage || song.Artist.coverImage}
             type="song"
             quickAdd={quickAdd}
             quickPlay={quickPlay}
@@ -71,7 +71,7 @@ function Home({quickPlay,quickAdd}) {
           <Avatar
             title={song.name}
             id={song.id}
-            image={song.cover_image}
+            image={song.coverImage}
             type="artist"
             quickAdd={quickAdd}
             quickPlay={quickPlay}
@@ -84,8 +84,8 @@ function Home({quickPlay,quickAdd}) {
           <Avatar
             title={song.name}
             id={song.id}
-            artist={song.artist}
-            image={song.album_image}
+            artist={song.Artist.name}
+            image={song.coverImage}
             type="album"
             quickAdd={quickAdd}
             quickPlay={quickPlay}
@@ -100,8 +100,8 @@ function Home({quickPlay,quickAdd}) {
           <Avatar
             title={song.name}
             id={song.id}
-            artist={song.artist}
-            image={song.cover_image}
+            artist={song.Artist.name}
+            image={song.coverImage}
             type="playlist"
             quickAdd={quickAdd}
             quickPlay={quickPlay}

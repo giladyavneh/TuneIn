@@ -1,17 +1,24 @@
 const express = require("express");
 const app = express.Router();
-const DataBase = require("../DataBase");
 const { Artist, Song, Album, Interaction, User } = require("../models");
 
 app.get("/:id", async (req, response, next) => {
+  console.log(req.headers);
   try {
     let res = await Artist.findByPk(req.params.id, {
       include: [
         Album,
-        { model: Song, include: [Album, { model: User, through:{
-          attributes:['isLiked'],
-          where:{isLiked:true}
-        }}] },
+        {
+          model: Song,
+          include: [
+            Album,
+            {
+              model: Interaction,
+              where: { user_id: req.headers["x-custom-header"] },
+              required: false,
+            },
+          ],
+        },
       ],
     });
     response.send(

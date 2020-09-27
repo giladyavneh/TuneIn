@@ -46,12 +46,12 @@ function Player({ song,next,minimized, previous, opener, count}) {
       <div className="songInfo">
         <h1 className="songTitle">{song?song.title:"title"}</h1>
         <h4 className="songMeta">
-          {song?song.artist:"artist"} | {song?song.album:"album"}
+          {song?song.Artist.name:"artist"} | {song?song.Album.name:"album"}
         </h4>
       </div>
       <div>
         <YouTube
-          videoId={song?urlQuery(song.link):"link"}
+          videoId={song?urlQuery(song.youtubeLink):"link"}
           opts={{width:"200", height:"115", playerVars:{autoplay:1}}}
           onReady={(e)=>{setPlayer(e.target)}}
           onStateChange={(e)=>e.target.getPlayerState()===1?setPlaying(true):setPlaying(false)}

@@ -31,9 +31,10 @@ function SearchBar({style,type,onChoose,clean}){
                 {
                 searchResults[x].map(title=>
                     <SearchResult title={title.title}
-                    image={title.image||title.artist_image||""}
-                    artist={title.artist||""}
-                    album={title.album||""}
+                    image={title.coverImage?title.coverImage:title.Album?title.Album.coverImage:
+                        title.Artist?title.Artist.coverImage:""}
+                    artist={title.Artist?title.Artist.name:""}
+                    album={title.Album?title.Album.name:""}
                     id={title.id}
                     type={x}
                     clicked={choose}/>

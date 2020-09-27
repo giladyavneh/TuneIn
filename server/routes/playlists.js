@@ -1,91 +1,86 @@
-const express=require("express")
-const app=express.Router()
-const DataBase=require("../DataBase")
+const express = require("express");
+const app = express.Router();
+const { Song, Playlist, User, Artist, Album, Interaction } = require("../models");
 
-app.get("/:id", (req, response) => {
-    let sql = `SELECT playlists.name AS title,
-    playlists.id as id,
-    playlists.cover_image as image,
-    users.username as artist
-    FROM playlists
-    LEFT JOIN users_playlist
-    ON playlists.id=users_playlist.playlist_id
-    LEFT JOIN users
-    ON users.id=users_playlist.user_id
-    WHERE playlists.id = '${req.params.id}'`;
-    DataBase.query(sql, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.length > 0
-          ? res
-          : "We couldn't find the playlist you were looking for"
-      );
+app.get("/:id", async (req, response, next) => {
+  try {
+    let res = await Playlist.findByPk(req.params.id, {
+      include: {
+        model: Song,
+        include: [
+          Artist,
+          Album,
+          {
+            model: Interaction,
+            where: { user_id: req.headers["x-custom-header"] },
+            required: false,
+          },
+        ],
+      },
     });
-  });
-  
-  app.get("/", (req,response)=>{
-    let sql=`SELECT playlists.name as name,
-    playlists.id as id
-    FROM playlists
-    JOIN users_playlist
-    ON playlists.id=users_playlist.playlist_id
-    WHERE users_playlist.user_id='${req.query.user_id}'`
-    DataBase.query(sql, (err,res)=>{
-      if (err) return response.status(500);
-      response.send(res)
-    })
-  })
+    let users = await res.getUser();
 
-  app.post("/", (req, response) => {
-    let sql = `INSERT INTO playlists SET name='${req.body.name}',
-    cover_image='${req.body.cover_image}'`;
-    DataBase.query(sql, req.body, (err, res) => {
-      if (err) return response.status(500);
-      DataBase.query(`INSERT INTO users_playlist SET
-      user_id='${req.body.user_id}',
-      playlist_id='${res.insertId}'`)
-      if (req.body.songs.length>0){
-        let sql=`INSERT INTO songs_in_playlist
-        (song_id,playlist_id) VALUES `
-        let values=req.body.songs.map(song=>`(${song.id},${res.insertId})`)
-        DataBase.query(sql+values.join(),(err,res)=>{
-          if (err) return response.status(500);
-        })
-      }
-      response.send(res);
-    });
-  });
-  
-  app.post("/:playlist_id/:song_id",(req,response)=>{
-    let sql=`INSERT INTO songs_in_playlist SET ?`
-    DataBase.query(sql,req.params,(err,res)=>{
-      if (err) return response.status(500);
-      response.send(res)
-    })
-  })
+    res.dataValues.Artist = users;
 
-  app.put("/:id", (req, response) => {
-    let sql = `UPDATE playlists SET ? WHERE id=${req.params.id}`;
-    DataBase.query(sql, req.body, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.affectedRows > 0
-          ? res
-          : "We couldn't find the playlist you were looking for"
-      );
-    });
-  });
-  
-  app.delete("/:id", (req, response) => {
-    let sql = `DELETE FROM playlists WHERE id=${req.params.id}`;
-    DataBase.query(sql, (err, res) => {
-      if (err) return response.status(500);
-      response.send(
-        res.affectedRows > 0
-          ? res
-          : "We couldn't find the playlist you were looking for"
-      );
-    });
-  });
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
 
-module.exports=app;
+app.get("/", async (req, response, next) => {
+  try {
+    let res = await Playlist.findAll({
+      where: { authorId: req.query.user_id },
+    });
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.post("/", async (req, response, next) => {
+  try {
+    let { authorId, coverImage, name, songs } = req.body;
+    let res = await Playlist.create({ authorId, name, coverImage });
+    console.log(songs[0].id);
+    await res.addSongsById(
+      songs.map((song) => song.id),
+      Song
+    );
+    console.log(songs[0].id);
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.post("/:playlist_id/:song_id", async (req, response) => {
+  try{
+    let res=await Playlist.findByPk(req.params.playlist_id)
+    res.addSong(req.params.song_id)
+    response.send(res);
+  } catch (e){
+    next(e)
+  }
+});
+
+app.put("/:id", async (req, response, next) => {
+  try {
+    let res = await Playlist.update({ where: { id: req.params.id } });
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.delete("/:id", async (req, response, next) => {
+  try {
+    let res = await Playlist.destroy({ where: { id: req.params.id } });
+    response.send(res);
+  } catch (e) {
+    next(e);
+  }
+});
+
+module.exports = app;
