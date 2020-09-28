@@ -2,7 +2,7 @@ const express = require("express");
 const app = express.Router();
 const { Song, Artist, Album, Interaction } = require("../models");
 
-app.get("/", async (req, response) => {
+app.get("/", async (req, response, next) => {
   try {
     let field = Object.keys(req.query)[0];
     let id = Object.values(req.query)[0];
@@ -68,7 +68,7 @@ app.put("/:id", async (req, response, next) => {
 
 app.delete("/:id", async (req, response, next) => {
   try {
-    await Song.destroy({ where: { id: req.params.id } });
+    let res=await Song.destroy({ where: { id: req.params.id } });
     response.send(
       res > 0 ? res : "We couldn't find the song you were looking for"
     );

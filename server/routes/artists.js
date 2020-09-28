@@ -24,7 +24,7 @@ app.get("/:id", async (req, response, next) => {
     response.send(
       res != null
         ? res
-        : { res: "We couldn't find the artist you were looking for" }
+        : ''
     );
   } catch (e) {
     next(e);
