@@ -139,14 +139,14 @@ app.get("/top_playlists", async (req, response, next) => {
 });
 
 app.get(`/search`, async (req, response) => {
-  try{
+  try {
     let { songs, artists, albums, playlists } = req.query;
     let promises = [];
     if (songs) {
       promises.push(
         Song.findAll({
           include: [Artist, Album],
-          attributes:['title','id'],
+          attributes: ["title", "id"],
           where: { title: { [Op.like]: `${songs}%` } },
         }).then((res) => {
           res.forEach((x) => (x.dataValues.type = "song"));
@@ -157,7 +157,7 @@ app.get(`/search`, async (req, response) => {
     if (artists) {
       promises.push(
         Artist.findAll({
-          attributes:[["name",'title'],'coverImage','id'],
+          attributes: [["name", "title"], "coverImage", "id"],
           where: { name: { [Op.like]: `${artists}%` } },
         }).then((res) => {
           res.forEach((x) => (x.dataValues.type = "artist"));
@@ -169,10 +169,10 @@ app.get(`/search`, async (req, response) => {
       promises.push(
         Album.findAll({
           include: Artist,
-          attributes:[["name",'title'],'coverImage','id'],
-          where:{name:{[Op.like]:`${albums}%`}},
+          attributes: [["name", "title"], "coverImage", "id"],
+          where: { name: { [Op.like]: `${albums}%` } },
         }).then((res) => {
-          res.forEach((x) => (x.dataValues.type = "artist"));
+          res.forEach((x) => (x.dataValues.type = "album"));
           return res;
         })
       );
@@ -180,8 +180,11 @@ app.get(`/search`, async (req, response) => {
     if (playlists) {
       promises.push(
         Playlist.findAll({
-          attributes:[["name",'title'],'coverImage','id'],
-          where:{name:{[Op.like]:`${playlists}%`}},
+          attributes: [["name", "title"], "coverImage", "id"],
+          where: { name: { [Op.like]: `${playlists}%` } },
+        }).then((res) => {
+          res.forEach((x) => (x.dataValues.type = "plylist"));
+          return res;
         })
       );
     }
@@ -194,8 +197,8 @@ app.get(`/search`, async (req, response) => {
       });
       response.send(result);
     });
-  } catch(e){
-    next(e)
+  } catch (e) {
+    next(e);
   }
 });
 
