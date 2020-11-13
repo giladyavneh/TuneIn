@@ -25,8 +25,8 @@ const updateElasticData = async(index, dataArray)=>{
       }
 }
 
-const getElasticIndex = async (index)=>{
-    return await client.search({index, size:10000})
+const getElasticIndex = async (index,size)=>{
+    return await client.search({index, size:size||1000})
 }
 
 module.exports={updateElasticData, getElasticIndex}

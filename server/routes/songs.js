@@ -1,16 +1,7 @@
 const express = require("express");
-const { updateElasticData, getElasticIndex } = require("../elasticSearch");
 const app = express.Router();
 const { Song, Artist, Album, Interaction } = require("../models");
 
-app.get("/elastic", async (req,res, next)=>{
-  try{
-    let {body}=await getElasticIndex('songs')
-    res.send(body)
-  } catch (e){
-    next(e)
-  }
-})
 
 app.get("/", async (req, response, next) => {
   try {

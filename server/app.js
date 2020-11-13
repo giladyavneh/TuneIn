@@ -7,6 +7,7 @@ const songs = require("./routes/songs");
 const artists = require("./routes/artists");
 const albums = require("./routes/albums");
 const playlists = require("./routes/playlists");
+const elastic=require("./routes/elastic")
 const {
   User,
   Song,
@@ -23,6 +24,7 @@ const { response } = require("express");
 app.use(express.json());
 app.use(cors());
 
+app.use("/elastic", elastic)
 app.use("/song", songs);
 app.use("/artist", artists);
 app.use("/album", albums);
