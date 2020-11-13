@@ -29,4 +29,12 @@ const getElasticIndex = async (index,size)=>{
     return await client.search({index, size:size||1000})
 }
 
-module.exports={updateElasticData, getElasticIndex}
+const getElasticDocsByQuery =async (index, field, query, size=3)=>{
+  return await client.search({
+    index,
+    q:query?field+":"+query+"*":"",
+    size
+  })
+}
+
+module.exports={updateElasticData, getElasticIndex, getElasticDocsByQuery}

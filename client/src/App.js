@@ -11,6 +11,7 @@ import NotFound from "./NotFound";
 import Auth from "./AuthApi";
 import LoginPage from "./LoginPage";
 import SignIn from "./SignIn";
+import SearchPage from "./SearchPage";
 
 
 function App() {
@@ -115,6 +116,11 @@ function App() {
         </Route>
         </Switch>
       :<>
+      <Switch>
+      <Route exact path="/search">
+          <SearchPage/>
+      </Route>
+      <Route path="/">
       <NavBar user={user} logout={logout}/>
       <div>
         <Switch>
@@ -129,6 +135,7 @@ function App() {
           <PlayListPage likeIt={likeIt} quickAdd={quickAdd} quickPlay={quickPlay}/>
         </Route>
         <Route path="/addcontent" component={AddContent}/>
+
         <Route path="*" component={NotFound}/>
         </Switch>
         {mediaPlays ? (
@@ -140,6 +147,8 @@ function App() {
           ""
         )}
       </div>
+      </Route>
+      </Switch>
       </>
       }
     

@@ -1,0 +1,15 @@
+.SearchPage{
+    background: rgb(30,30,30);
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding:20px;
+}
+.SearchPage .searchBar{
+    max-width: 1000px;
+    width: 100%;
+    height: 30px;
+    border-radius: 10px;
+    font-size: 16px;
+    padding: 0px 7px;
+    color:rgb(100, 100, 100);
+}

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { updateElasticData, getElasticIndex } = require("../elasticSearch");
+const { updateElasticData, getElasticIndex, getElasticDocsByQuery } = require("../elasticSearch");
 const { Song, Artist, Album, Interaction } = require("../models");
 
 router.post("/", async (req, res, next) => {
@@ -22,9 +22,30 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/all", async (req, res, next) => {
+  let result = {};
+  const promises = [];
+  try {
+    const indices = ["songs", "artists", "albums"];
+    indices.forEach((index) => {
+      promises.push(
+        getElasticDocsByQuery(index, index==="songs"?'title':'name', req.query.q).then(
+          (ans) =>
+            (result[index] = ans.body.hits.hits.map((doc) => doc._source))
+        )
+      );
+    });
+    await Promise.all(promises);
+    console.log(result);
+    res.send(result);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get("/songs", async (req, res, next) => {
   try {
-    let { body } = await getElasticIndex("songs",req.query.size);
+    let { body } = await getElasticIndex("songs", req.query.size);
     res.send(body);
   } catch (e) {
     next(e);
@@ -32,30 +53,30 @@ router.get("/songs", async (req, res, next) => {
 });
 
 router.get("/artists", async (req, res, next) => {
-    try {
-      let { body } = await getElasticIndex("artists",req.query.size);
-      res.send(body);
-    } catch (e) {
-      next(e);
-    }
-  });
+  try {
+    let { body } = await getElasticIndex("artists", req.query.size);
+    res.send(body);
+  } catch (e) {
+    next(e);
+  }
+});
 
-  router.get("/albums", async (req, res, next) => {
-    try {
-      let { body } = await getElasticIndex("albums",req.query.size);
-      res.send(body);
-    } catch (e) {
-      next(e);
-    }
-  });
+router.get("/albums", async (req, res, next) => {
+  try {
+    let { body } = await getElasticIndex("albums", req.query.size);
+    res.send(body);
+  } catch (e) {
+    next(e);
+  }
+});
 
 router.get("/playlists", async (req, res, next) => {
-try {
-    let { body } = await getElasticIndex("playlists",req.query.size);
+  try {
+    let { body } = await getElasticIndex("playlists", req.query.size);
     res.send(body);
-} catch (e) {
+  } catch (e) {
     next(e);
-}
+  }
 });
 
 module.exports = router;
