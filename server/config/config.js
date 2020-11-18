@@ -1,17 +1,18 @@
-{
+require("dotenv").config()
+module.exports={
   "development": {
-    "username": "root",
-    "password": "giladyavneh",
+    "username": process.env.SQL_USER,
+    "password": process.env.SQL_PASSWORD,
     "database": "tuneinorm",
-    "host": "127.0.0.1",
+    "host": process.env.SQL_HOST,
     "dialect": "mysql",
     "define":{"underscored":true}
   },
   "test": {
-    "username": "root",
-    "password": "giladyavneh",
+    "username": process.env.SQL_USER,
+    "password": process.env.SQL_PASSWORD,
     "database": "tuneinormtesting",
-    "host": "127.0.0.1",
+    "host": process.env.SQL_HOST,
     "dialect": "mysql",
     "define":{"underscored":true}
   },

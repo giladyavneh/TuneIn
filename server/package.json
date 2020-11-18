@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "set NODE_ENV=test&& jest --detectOpenHandles",
-    "dev": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "init": "npx sequelize db:create 'tuneinorm' && npx sequelize db:migrate && npx sequelize db:seed:all"
   },
   "keywords": [],
   "author": "",
