@@ -1,0 +1,24 @@
+
+.SongButton{
+    background-image: linear-gradient(rgb(30,30,30),black);
+    margin: 5px;
+    padding:5px;
+    color:whitesmoke;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: auto min-content;
+    column-gap: 5px;
+}
+.info, .playerDetails{
+    background-image: inherit;
+    white-space: nowrap;
+}
+
+.info{
+    overflow-x: hidden;
+    
+}
+.metadata{
+    width: auto;
+    color: rgb(160, 160, 160);
+}

@@ -1,0 +1,25 @@
+.ArtistPage{
+    background: rgb(60,60,60);
+    min-height: 100vh;
+    background-size: 100%;
+    background-attachment: fixed;
+    
+    background-position:0% 10%;
+}
+.coverImage{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.coverImage h1{
+    margin: 0px 20px;
+    font-size: 20vh;
+    color: whitesmoke;
+    text-shadow: rgb(60,60,60) 0px 0px 10px;
+}
+.coverImage h2{
+    margin: 0px 20px;
+    font-size: 10vh;
+    color: rgb(160, 160, 160);
+    text-shadow: rgb(60,60,60) 0px 0px 10px;
+}

@@ -1,0 +1,21 @@
+.NotFound{
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.NotFound .text{
+    text-align: center;
+    color: rgb(219, 219, 219);
+    background-image: url(https://www.flaticon.com/svg/static/icons/svg/710/710047.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-blend-mode: luminosity;
+}
+
+.NotFound .text h1{
+    font-size: 70px;
+}
+.NotFound .text h4{
+    font-size: 20px;
+}
