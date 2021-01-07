@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Auth from "./AuthApi";
+import Auth from "../AuthApi";
 import "./QuickPlaylistAdd.css";
 
 function QuickPlaylistAdd({x,y,song_id,closeMe}){

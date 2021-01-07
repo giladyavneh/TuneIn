@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "./MediaPlayer.css";
 import PlayListPlayer from "./PlayListPlayer";
 import Player from "./Player";
-import Auth from "./AuthApi";
+import Auth from "../AuthApi";
 
 function MediaPlayer({ songs, closePlayer }) {
   const noMoreSongs = {

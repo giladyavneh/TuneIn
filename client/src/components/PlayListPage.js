@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./ArtistPage.css";
-import Auth from "./AuthApi";
+import Auth from "../AuthApi";
 import SongListItem from "./SongListItem";
 import QuickPlaylistAdd from "./QuickPlaylistAdd";
 

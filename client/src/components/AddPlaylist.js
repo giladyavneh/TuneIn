@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import "./AddSong.css";
-import Auth from "./AuthApi";
+import Auth from "../AuthApi";
 import PendingForPlaylist from "./PendingForPlaylist"
 
 function AddPlaylist() {

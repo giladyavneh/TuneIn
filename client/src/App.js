@@ -1,16 +1,16 @@
 import React, { useEffect, useReducer, useState } from "react";
 import "./App.css"
-import Home from "./Home";
-import MediaPlayer from "./MediaPlayer";
-import ArtistPage from "./ArtistPage";
-import PlayListPage from "./PlayListPage";
+import Home from "./components/Home";
+import MediaPlayer from "./components/MediaPlayer";
+import ArtistPage from "./components/ArtistPage";
+import PlayListPage from "./components/PlayListPage";
 import {BrowserRouter, Switch, Route, Link, match, useHistory} from "react-router-dom";
-import NavBar from "./NavBar";
-import AddContent from "./AddContent";
-import NotFound from "./NotFound";
+import NavBar from "./components/NavBar";
+import AddContent from "./components/AddContent";
+import NotFound from "./components/NotFound";
 import Auth from "./AuthApi";
-import LoginPage from "./LoginPage";
-import SignIn from "./SignIn";
+import LoginPage from "./components/LoginPage";
+import SignIn from "./components/SignIn";
 
 
 function App() {

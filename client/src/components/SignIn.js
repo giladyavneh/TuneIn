@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import {mailCheck, passwordCheck, usernameCheck} from "../services/auth"
 import "./log.css";
 import TopBanner from "./TopBanner";
 
@@ -20,16 +21,18 @@ function SignIn({autoConnect}) {
     );
     if (compration === firstPassword) setPassword(compration);
   }
-  function mailCheck(mail) {
-    let regex = /^.+[@]\w+\..+$/;
-    return regex.test(mail);
-  }
 
   async function submit() {
-    if (!Boolean(username)||!Boolean(email) || !mailCheck(email)||!Boolean(password)) {
-      setNameMassage(!Boolean(username)?"Please enter a valid user name":"");
+    if (!Boolean(username) ||
+    !usernameCheck(username) ||
+    !Boolean(email) ||
+    !mailCheck(email) ||
+    !Boolean(password) ||
+    !passwordCheck(password)) {
+      setNameMassage(!Boolean(username) || !usernameCheck(username) ?"Please enter a valid user name":"");
       setEmailMassage(!Boolean(email) || !mailCheck(email)?"Please enter a valid E-mail adress":"")
-      setPasswordMassage(!Boolean(password)?"Please enter a valid password and confirm it":"")
+      setPasswordMassage(!Boolean(password)?"Please enter a valid password and confirm it":
+      !passwordCheck(password) ? "password must be at list 6 characters long":"")
       return;
     }
     let content = { username, email, password };

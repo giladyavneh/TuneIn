@@ -4,7 +4,7 @@ import Avatar from "./Avatar";
 import DisplayCarusel from "./DisplayCarusel";
 import SongListItem from "./SongListItem";
 import { match, useLocation, useParams } from "react-router-dom";
-import Auth from "./AuthApi";
+import Auth from "../AuthApi";
 import QuickPlaylistAdd from "./QuickPlaylistAdd";
 
 function ArtistPage({ quickAdd, quickPlay, likeIt }) {
