@@ -52,11 +52,11 @@ function SignIn({autoConnect}) {
       })
       .then((res) => (comecabk = res));
     if (status >= 400) {
-      let usernameRegex = /'users.username'$/;
-      let emailRegex = /'users.email'$/;
-      if (usernameRegex.test(comecabk.sqlMessage)) {
+      let usernameRegex = /users.username/;
+      let emailRegex = /users.email/;
+      if (comecabk.error.errors.some(err=>usernameRegex.test(err.message))) {
         setNameMassage("This user Name is already taken :(");
-      } else if (emailRegex.test(comecabk.sqlMessage)) {
+      } else if (comecabk.error.errors.some(err=>emailRegex.test(err.message))) {
         setEmailMassage("This mail is already being used :(");
       } else
         setNameMassage(

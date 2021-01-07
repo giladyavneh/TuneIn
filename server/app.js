@@ -18,7 +18,7 @@ const {
   Playlist,
 } = require("./models");
 const { Op } = require("sequelize");
-const { response } = require("express");
+const { signinAuth, loginAuth } = require("./helpers/middleware")
 
 app.use(express.json());
 app.use(cors());
@@ -95,7 +95,7 @@ app.get("/top_albums", async (req, response, next) => {
         ],
       ],
     });
-    response.send(res).slice(0,20);
+    response.send(res.slice(0,20));
   } catch (e) {
     next(e);
   }
@@ -202,9 +202,10 @@ app.get(`/search`, async (req, response) => {
   }
 });
 
-app.post("/signin", async (req, response, next) => {
+app.post("/signin", signinAuth,  async (req, response, next) => {
   try {
-    await User.create(req.body);
+    const {username, password, email} = req.body;
+    await User.create({username, password, email});
     response.send({
       idKey: bcrypt.hashSync(req.body.password, 10),
       username: req.body.username,
@@ -214,7 +215,7 @@ app.post("/signin", async (req, response, next) => {
   }
 });
 
-app.post("/login", async (req, response, next) => {
+app.post("/login", loginAuth, async (req, response, next) => {
   try {
     let res = await User.findOne({ where: { username: req.body.username } });
     if (res == null)
