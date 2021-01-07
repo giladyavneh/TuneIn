@@ -38,7 +38,7 @@ app.get("/top_songs", async (req, response, next) => {
         [sequelize.fn("sum", sequelize.col(`Interactions.play_count`)), "DESC"],
       ],
     });
-    response.send(res);
+    response.send(res.slice(0,20));
   } catch (e) {
     next(e);
   }
@@ -66,7 +66,7 @@ app.get("/top_artists", async (req, response, next) => {
         ],
       ],
     });
-    response.send(res);
+    response.send(res.slice(0,20));
   } catch (e) {
     next(e);
   }
@@ -95,7 +95,7 @@ app.get("/top_albums", async (req, response, next) => {
         ],
       ],
     });
-    response.send(res);
+    response.send(res).slice(0,20);
   } catch (e) {
     next(e);
   }
@@ -132,7 +132,7 @@ app.get("/top_playlists", async (req, response, next) => {
       );
     }
     await Promise.all(pendings);
-    response.send(res);
+    response.send(res.slice(0,20));
   } catch (e) {
     next(e);
   }

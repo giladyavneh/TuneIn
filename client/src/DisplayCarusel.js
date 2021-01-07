@@ -6,7 +6,7 @@ function DisplayCarusel(props){
     const kids=useRef([])
     useEffect(()=>{
         setItems(Array.isArray(props.children)?props.children.map(
-            (x,i)=><div ref={el=>kids.current[i]=el}>{x}</div>):<div ref={el=>kids.current[0]=el}>{props.children}</div>)
+            (x,i)=><div ref={el=>kids.current[i]=el} key={i}>{x}</div>):<div ref={el=>kids.current[0]=el}>{props.children}</div>)
         },[props.children])
     function left(e){
         for(let i=0;i<props.children.length;i++){
@@ -22,7 +22,8 @@ function DisplayCarusel(props){
         let papa=e.target.parentElement;
         for(let i=0;i<props.children.length;i++){
             let kido=kids.current[i];
-            if(papa.scrollLeft+papa.clientWidth<kido.offsetLeft+kido.clientWidth){
+            if(papa.scrollLeft+papa.clientWidth<kido.offsetLeft){
+                console.log(i)
                 papa.scrollTo(kids.current[i].offsetLeft+kido.clientWidth-papa.clientWidth,0)
                 return
             }
