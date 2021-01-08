@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express.Router();
-const { Artist, Song, Album, Interaction, User } = require("../models");
+const { Artist, Song, Album, Interaction } = require("../models");
 
 app.get("/:id", async (req, response, next) => {
   console.log(req.headers);

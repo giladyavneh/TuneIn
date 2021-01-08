@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import Auth from "../AuthApi";
 import AddAlbum from "./AddAlbum";
 import AddArtist from "./AddArtist";
 import "./AddContent.css";
@@ -6,7 +7,8 @@ import AddPlaylist from "./AddPlaylist";
 import AddSong from "./AddSong";
 
 function AddContent(){
-    const [current, setCurrent]=useState("song")
+    const [current, setCurrent]=useState("playlist")
+    const {user} = useContext(Auth)
     let currentCard;
     switch(current){
         case "song":
@@ -26,9 +28,12 @@ function AddContent(){
         <div className="AddContent">
             <div className="main">
                 <div className="tabs">
+                    {user.is_admin?
+                    <>
                     <button onClick={()=>setCurrent("song")}>song</button>
                     <button onClick={()=>setCurrent("artist")}>artist</button>
                     <button onClick={()=>setCurrent("album")}>album</button>
+                    </>:""}
                     <button onClick={()=>setCurrent("playlist")}>playlist</button>
                 </div>
                 <div className="content">

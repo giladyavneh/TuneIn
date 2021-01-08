@@ -17,7 +17,6 @@ function App() {
   const [loggedIn,setLoggedIn]=useState()
   const [loading,setLoading]=useState(true)
   const [user,setUser]=useState({  })
-  const History=useHistory()
   useEffect(()=>{
     if(loading){
       if(sessionStorage.getItem('idKey')!==null){
