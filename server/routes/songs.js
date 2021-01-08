@@ -1,4 +1,5 @@
 const express = require("express");
+const { adminAuth } = require("../helpers/middleware");
 const app = express.Router();
 const { Song, Artist, Album, Interaction } = require("../models");
 
@@ -46,7 +47,7 @@ app.get("/:id", async (req, response, next) => {
   }
 });
 
-app.post("/", async (req, response, next) => {
+app.post("/", adminAuth, async (req, response, next) => {
   try {
     let res = await Song.create(req.body);
     response.send(res);
@@ -55,7 +56,7 @@ app.post("/", async (req, response, next) => {
   }
 });
 
-app.put("/:id", async (req, response, next) => {
+app.put("/:id", adminAuth, async (req, response, next) => {
   try {
     let res = await Song.update(req.body, { where: { id: req.params.id } });
     response.send(
@@ -66,7 +67,7 @@ app.put("/:id", async (req, response, next) => {
   }
 });
 
-app.delete("/:id", async (req, response, next) => {
+app.delete("/:id", adminAuth, async (req, response, next) => {
   try {
     let res=await Song.destroy({ where: { id: req.params.id } });
     response.send(

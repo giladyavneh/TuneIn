@@ -1,4 +1,5 @@
 const express = require("express");
+const { adminAuth } = require("../helpers/middleware");
 const app = express.Router();
 const { Artist, Song, Album, Interaction } = require("../models");
 
@@ -31,7 +32,7 @@ app.get("/:id", async (req, response, next) => {
   }
 });
 
-app.post("/", async (req, response, next) => {
+app.post("/", adminAuth, async (req, response, next) => {
   try {
     response.send(await Artist.create(req.body));
   } catch (e) {
@@ -39,7 +40,7 @@ app.post("/", async (req, response, next) => {
   }
 });
 
-app.put("/:id", async (req, response, next) => {
+app.put("/:id", adminAuth, async (req, response, next) => {
   try {
     let res = await Artist.update(req.body, { where: { id: req.params.id } });
     response.send(
@@ -50,7 +51,7 @@ app.put("/:id", async (req, response, next) => {
   }
 });
 
-app.delete("/:id", async (req, response, next) => {
+app.delete("/:id", adminAuth, async (req, response, next) => {
   try {
     let res = await Artist.destroy({ where: { id: req.params.id } });
     response.send(

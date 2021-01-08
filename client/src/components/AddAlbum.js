@@ -18,8 +18,12 @@ function AddAlbum() {
                 method:"POST",
                 body:JSON.stringify(content),
                 headers:{
-                    'Content-Type':'application/json'
-                }
+                  'Content-Type':'application/json',
+                  'admin-auth':JSON.stringify({
+                    idKey:sessionStorage.getItem('idKey'),
+                    username: sessionStorage.getItem('username')
+                  })
+              }
             }
             fetch('/album', options).then(res=>History.push('/'))
         }
