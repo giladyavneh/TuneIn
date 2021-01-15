@@ -26,6 +26,8 @@ function App() {
       }
       else if(localStorage.getItem('access_token')){
         console.log("loacl")
+      sessionStorage.setItem('access_token', localStorage.getItem('access_token'))
+      sessionStorage.setItem('refresh_token', localStorage.getItem('refresh_token'))
       autoConnect(localStorage.getItem('access_token'))
       }
       else setLoading(false)
