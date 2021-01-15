@@ -19,6 +19,7 @@ const {
 } = require("./models");
 const { Op } = require("sequelize");
 const { signinAuth, loginAuth } = require("./helpers/middleware")
+const jwt = require("jsonwebtoken")
 
 app.use(express.json());
 app.use(cors());
@@ -223,9 +224,19 @@ app.post("/login", loginAuth, async (req, response, next) => {
     return !bcrypt.compareSync(req.body.password, res.password)
       ? response.status(401).send({ massage: "Wrong password" })
       : response.send({
-          idKey: bcrypt.hashSync(res.password, 10),
-          username: res.username,
-        });
+        access_token:jwt.sign({
+        id:res.id,
+        username:res.username,
+        email:res.email,
+        is_admin:res.is_admin
+      }, process.env.JWT_ACCESS_SECRET,{expiresIn:20*60}),
+      refresh_token:jwt.sign({
+        id:res.id,
+        username:res.username,
+        email:res.email,
+        is_admin:res.is_admin
+      }, process.env.JWT_REFRESH_SECRET)
+    });
   } catch (e) {
     next(e);
   }

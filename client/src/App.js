@@ -11,6 +11,7 @@ import NotFound from "./components/NotFound";
 import Auth from "./AuthApi";
 import LoginPage from "./components/LoginPage";
 import SignIn from "./components/SignIn";
+import jwt from "jsonwebtoken";
 
 
 function App() {
@@ -19,13 +20,13 @@ function App() {
   const [user,setUser]=useState({  })
   useEffect(()=>{
     if(loading){
-      if(sessionStorage.getItem('idKey')!==null){
+      if(sessionStorage.getItem('access_token')!==null){
         console.log("session")
-      autoConnect(sessionStorage.getItem('idKey'),sessionStorage.getItem('username'))
+        autoConnect(sessionStorage.getItem('access_token'))
       }
-      else if(localStorage.getItem('idKey')){
+      else if(localStorage.getItem('access_token')){
         console.log("loacl")
-      autoConnect(localStorage.getItem('idKey'),localStorage.getItem('username'))
+      autoConnect(localStorage.getItem('access_token'))
       }
       else setLoading(false)
     }
@@ -63,37 +64,27 @@ function App() {
   fetch(`/interaction/${user.id}/${song_id}`, options)
   }
 
-  async function autoConnect(idKey,username){
-    let content = { username,idKey };
-    let options = {
-      method: "POST",
-      body: JSON.stringify(content),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    await fetch("/connect",options).then(res=>res.json()).then(res=>{
-      console.log(res)
-      if(res.length===0){
-        setLoggedIn(false)
-        setUser({})
-      }
-      else{
-        console.log('imlogged')
-        setLoggedIn(true);
-        setUser({id:res[0].id,email:res[0].email,username:res[0].username,is_admin:res[0].is_admin})
-      }
-    })
+  async function autoConnect(token){
+    try{
+      const res = jwt.decode(token)
+      console.log('imlogged')
+      setLoggedIn(true);
+      setUser({id:res.id,email:res.email,username:res.username,is_admin:res.is_admin})
+    }
+    catch{
+      setLoggedIn(false)
+      setUser({})
+    }
     setLoading(false)
   }
 
   function logout(){
     setUser({});
     setLoggedIn(false)
-    sessionStorage.removeItem('idKey')
-    sessionStorage.removeItem('username')
-    localStorage.removeItem('idKey')
-    localStorage.removeItem('username')
+    sessionStorage.removeItem('access_token')
+    sessionStorage.removeItem('refresh_token')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
   }
 
   return (

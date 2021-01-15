@@ -33,21 +33,24 @@ function LoginPage({autoConnect}) {
     let comecabk;
     await fetch("/login", options)
       .then((res) => {
+        console.log(res)
         status = res.status;
         return res.json();
       })
       .then((res) => (comecabk = res));
+      console.log(comecabk)
       if (status>=400){
           setNameMassage(comecabk.massage)
       }
       else{
-        for (let key in comecabk){
-            if(rememberMe)localStorage.setItem(key, comecabk[key])
-            sessionStorage.setItem(key, comecabk[key])
-        }
-        autoConnect(comecabk.idKey,comecabk.username)
-        History.push('/')
-        
+          if(rememberMe){
+            localStorage.setItem("access_token", comecabk.access_token)
+            localStorage.setItem("refresh_token", comecabk.access_token)
+          }
+          sessionStorage.setItem("access_token", comecabk.access_token)
+          sessionStorage.setItem("refresh_token", comecabk.access_token)
+          autoConnect(comecabk.access_token)
+          History.push('/')
       }
   }
 
