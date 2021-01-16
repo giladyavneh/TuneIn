@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import httpClient from "../services/httpClient";
 import "./SearchBar.css"
 import SearchResult from "./searchResult";
 
@@ -10,7 +11,7 @@ function SearchBar({style,type,onChoose,clean}){
         let searchObj={}
         types.forEach(element => searchObj[element+'s']=query);
         let urlQuery=new URLSearchParams(searchObj)
-        fetch(`/search?${urlQuery}`).then(res=>res.json()).then(res=>setSearchResults(res))
+        httpClient.get(`/search?${urlQuery}`).then(res=>setSearchResults(res.data))
     }
     function choose({title,image,artist,album,id,clicked,type}){
         clean?inputRef.current.value="":inputRef.current.value=title

@@ -3,6 +3,7 @@ const {
     User
 } = require("../models")
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 
 function signinAuth(req, res, next){
     const {username, password, email} = req.body;
@@ -15,14 +16,6 @@ function loginAuth(req, res, next){
     const {username, password} = req.body;
     if(!passwordCheck(password) || !usernameCheck(username))
     return res.status(400).send("malformed content")
-    next()
-}
-
-async function adminAuth(req, res, next){
-    const {idKey, username} = JSON.parse(req.headers['admin-auth'])
-    const user = await User.findOne({where:{username}})
-    if (!user) return res.status(400).send('unauthorised request')
-    if (!bcrypt.compareSync(user.password, idKey)||!user.is_admin) return res.status(400).send('unauthorised request')
     next()
 }
 
@@ -74,7 +67,7 @@ req.auth = { id: payload.id };
 next();
 }
 
-async function buisnessAdminAuth(req, res, next) {
+async function adminAuth(req, res, next) {
 let payload;
 try {
     payload = await jwtAuth(req, res);
@@ -85,13 +78,10 @@ try {
     ? res.status(240).send("")
     : res.status(401).send("");
 }
-req.auth = { id: payload.id, admin: payload.admin };
-const { buisnessid } = req.headers;
-req.headers.buisnessId = buisnessid;
-if (!req.auth.admin.includes(parseInt(buisnessid))) {
-    console.log("Buisness Auth failded");
-    return res.status(403).send("This isn't your buisness");
+if (!payload.is_admin) {
+    console.log("Admin Auth failded");
+    return res.status(403).send("Not an admin");
 }
 next();
 }
-module.exports = { signinAuth, loginAuth, adminAuth }
+module.exports = { signinAuth, loginAuth, adminAuth, userAuthentication }

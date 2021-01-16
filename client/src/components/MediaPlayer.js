@@ -3,6 +3,7 @@ import "./MediaPlayer.css";
 import PlayListPlayer from "./PlayListPlayer";
 import Player from "./Player";
 import Auth from "../AuthApi";
+import httpClient from "../services/httpClient";
 
 function MediaPlayer({ songs, closePlayer }) {
   const noMoreSongs = {
@@ -21,13 +22,13 @@ function MediaPlayer({ songs, closePlayer }) {
   function count(song_id) {
     let options = {
       method: "PUT",
-      body: JSON.stringify({ playCount: true }),
+      data:{ playCount: true },
       headers: {
         "Content-Type": "application/json",
       },
     };
     console.log("ready")
-    fetch(`/interaction/${user.id}/${song_id}`, options);
+    httpClient(`/interaction/${user.id}/${song_id}`, options);
   }
 
   useEffect(() => {

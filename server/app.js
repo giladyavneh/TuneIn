@@ -18,11 +18,64 @@ const {
   Playlist,
 } = require("./models");
 const { Op } = require("sequelize");
-const { signinAuth, loginAuth } = require("./helpers/middleware")
+const { signinAuth, loginAuth, userAuthentication } = require("./helpers/middleware")
 const jwt = require("jsonwebtoken")
 
 app.use(express.json());
 app.use(cors());
+
+app.post("/signin", signinAuth,  async (req, response, next) => {
+  try {
+    const {username, password, email} = req.body;
+    await User.create({username, password, email});
+    response.send({
+      idKey: bcrypt.hashSync(req.body.password, 10),
+      username: req.body.username,
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.post("/login", loginAuth, async (req, response, next) => {
+  try {
+    let res = await User.findOne({ where: { username: req.body.username } });
+    if (res == null)
+      return response.status(400).send({ massage: "Wrong user name" });
+    return !bcrypt.compareSync(req.body.password, res.password)
+      ? response.status(401).send({ massage: "Wrong password" })
+      : response.send({
+        access_token:jwt.sign({
+        id:res.id,
+        username:res.username,
+        email:res.email,
+        is_admin:res.is_admin
+      }, process.env.JWT_ACCESS_SECRET,{expiresIn:20*60}),
+      refresh_token:jwt.sign({
+        id:res.id,
+        username:res.username,
+        email:res.email,
+        is_admin:res.is_admin
+      }, process.env.JWT_REFRESH_SECRET)
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.post("/connect", async (req, response, next) => {
+  try {
+    let res = await User.findAll({ where: { username: req.body.username } });
+    if (res.length === 0) return response.status(500).send([]);
+    return response.send(
+      bcrypt.compareSync(res[0].password, req.body.idKey) ? res : []
+    );
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.use(userAuthentication)
 
 app.use("/song", songs);
 app.use("/artist", artists);
@@ -203,70 +256,21 @@ app.get(`/search`, async (req, response) => {
   }
 });
 
-app.post("/signin", signinAuth,  async (req, response, next) => {
-  try {
-    const {username, password, email} = req.body;
-    await User.create({username, password, email});
-    response.send({
-      idKey: bcrypt.hashSync(req.body.password, 10),
-      username: req.body.username,
-    });
-  } catch (e) {
-    next(e);
-  }
-});
 
-app.post("/login", loginAuth, async (req, response, next) => {
-  try {
-    let res = await User.findOne({ where: { username: req.body.username } });
-    if (res == null)
-      return response.status(400).send({ massage: "Wrong user name" });
-    return !bcrypt.compareSync(req.body.password, res.password)
-      ? response.status(401).send({ massage: "Wrong password" })
-      : response.send({
-        access_token:jwt.sign({
-        id:res.id,
-        username:res.username,
-        email:res.email,
-        is_admin:res.is_admin
-      }, process.env.JWT_ACCESS_SECRET,{expiresIn:20*60}),
-      refresh_token:jwt.sign({
-        id:res.id,
-        username:res.username,
-        email:res.email,
-        is_admin:res.is_admin
-      }, process.env.JWT_REFRESH_SECRET)
-    });
-  } catch (e) {
-    next(e);
-  }
-});
 
-app.post("/connect", async (req, response, next) => {
+app.put("/interaction/:user_id/:song_id", userAuthentication, async (req, response, next) => {
   try {
-    let res = await User.findAll({ where: { username: req.body.username } });
-    if (res.length === 0) return response.status(500).send([]);
-    return response.send(
-      bcrypt.compareSync(res[0].password, req.body.idKey) ? res : []
-    );
-  } catch (e) {
-    next(e);
-  }
-});
-
-app.put("/interaction/:user_id/:song_id", async (req, response, next) => {
-  try {
+    const userId = req.auth.id
     let exist = await Interaction.findOne({
-      where: { songId: req.params.song_id, userId: req.params.user_id },
+      where: { songId: req.params.song_id, userId },
     });
     if (exist) {
       if (req.body.isLiked)
         exist.update({ isLiked: Sequelize.literal("NOT is_liked") });
       if (req.body.playCount) exist.increment("playCount");
     } else {
-      console.log(req.params.song_id, req.params.user_id);
       Interaction.create({
-        userId: req.params.user_id,
+        userId: userId,
         songId: req.params.song_id,
         isLiked: Boolean(req.body.isLiked),
         playCount: Boolean(req.body.playCount) ? 1 : 0,

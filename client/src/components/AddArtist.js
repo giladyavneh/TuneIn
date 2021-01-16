@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import httpClient from "../services/httpClient";
 import "./AddSong.css";
 
 function AddArtist() {
@@ -13,16 +14,12 @@ function AddArtist() {
             let content={name, coverImage}
             let options={
                 method:"POST",
-                body:JSON.stringify(content),
+                data:content,
                 headers:{
                     'Content-Type':'application/json',
-                    'admin-auth':JSON.stringify({
-                      idKey:sessionStorage.getItem('idKey'),
-                      username: sessionStorage.getItem('username')
-                    })
                 }
             }
-            fetch('/artist', options).then(res=>History.push('/'))
+            httpClient('/artist', options).then(res=>History.push('/'))
         }
         else{
             setMassage("A Name must be submitted!")

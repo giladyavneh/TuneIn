@@ -34,7 +34,7 @@ app.get("/:id", async (req, response, next) => {
         { model: Album, attributes: ["name", "coverImage"] },
         {
           model: Interaction,
-          where: { user_id: req.headers["x-custom-header"] },
+          where: { user_id: req.headers.auth },
           required: false,
         },
       ],

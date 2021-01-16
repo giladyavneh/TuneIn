@@ -28,7 +28,7 @@ function AddContent(){
         <div className="AddContent">
             <div className="main">
                 <div className="tabs">
-                    {true?
+                    {user.is_admin?
                     <>
                     <button onClick={()=>setCurrent("song")}>song</button>
                     <button onClick={()=>setCurrent("artist")}>artist</button>

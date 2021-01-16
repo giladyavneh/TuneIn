@@ -4,6 +4,7 @@ import "./ArtistPage.css";
 import Auth from "../AuthApi";
 import SongListItem from "./SongListItem";
 import QuickPlaylistAdd from "./QuickPlaylistAdd";
+import httpClient from "../services/httpClient";
 
 function PlayListPage({ quickAdd, quickPlay, likeIt }) {
   const type = useParams().type;
@@ -15,9 +16,9 @@ function PlayListPage({ quickAdd, quickPlay, likeIt }) {
   let { user } = useContext(Auth);
   useEffect(() => {
     let getData = async () => {
-      let data = await fetch(`/${type}/${id}`,{
+      let {data} = await httpClient.get(`/${type}/${id}`,{
         headers: { "X-Custom-Header": String(user.id) },
-      }).then((res) => res.json());
+      });
       console.log(data)
       setData(data);
     };

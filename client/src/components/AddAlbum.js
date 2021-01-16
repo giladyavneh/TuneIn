@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import "./AddSong.css";
+import httpClient from "../services/httpClient";
 
 function AddAlbum() {
     const [name,setName]=useState()
@@ -16,16 +17,12 @@ function AddAlbum() {
             let content={name, artist_id, cover_image}
             let options={
                 method:"POST",
-                body:JSON.stringify(content),
+                data:content,
                 headers:{
-                  'Content-Type':'application/json',
-                  'admin-auth':JSON.stringify({
-                    idKey:sessionStorage.getItem('idKey'),
-                    username: sessionStorage.getItem('username')
-                  })
-              }
+                  'Content-Type':'application/json'
+                  }
             }
-            fetch('/album', options).then(res=>History.push('/'))
+            httpClient('/album', options).then(res=>History.push('/'))
         }
         else{
             setMassage("A Name and an Artist must be submitted!")

@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import "./AddSong.css";
 import Auth from "../AuthApi";
 import PendingForPlaylist from "./PendingForPlaylist"
+import httpClient from "../services/httpClient";
 
 function AddPlaylist() {
     const [name,setName]=useState()
@@ -19,12 +20,12 @@ function AddPlaylist() {
             let content={name, authorId, coverImage, songs}
             let options={
                 method:"POST",
-                body:JSON.stringify(content),
+                data:content,
                 headers:{
                     'Content-Type':'application/json'
                 }
             }
-            fetch('/playlist', options).then(res=>History.push('/'))
+            httpClient('/playlist', options).then(res=>History.push('/'))
         }
         else{
             setMassage("A Name must be submitted!")

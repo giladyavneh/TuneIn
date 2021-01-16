@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import { urlQuery } from "./Player";
 import YouTube from "react-youtube" ;
 import { useHistory } from "react-router-dom";
+import httpClient from "../services/httpClient";
 
 let toHHMMSS = function (secs) {
     var sec_num = secs;
@@ -35,16 +36,12 @@ function AddSong() {
             let content={title,artist_id,album_id,length,youtubeLink:youtube_link,track_number}
             let options={
                 method:"POST",
-                body:JSON.stringify(content),
+                data:content,
                 headers:{
-                    'Content-Type':'application/json',
-                    'admin-auth':JSON.stringify({
-                      idKey:sessionStorage.getItem('idKey'),
-                      username: sessionStorage.getItem('username')
-                    })
+                    'Content-Type':'application/json'
                 }
             }
-            fetch('/song', options).then(res=>History.push('/'))
+            httpClient('/song', options).then(res=>History.push('/'))
         }
         else if(!length){
             setMassage("Please wait for the video to load")

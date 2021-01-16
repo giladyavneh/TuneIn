@@ -1,10 +1,10 @@
 const express = require("express");
-const { adminAuth } = require("../helpers/middleware");
+const { adminAuth, userAuthentication } = require("../helpers/middleware");
 const app = express.Router();
 const { Artist, Song, Album, Interaction } = require("../models");
 
-app.get("/:id", async (req, response, next) => {
-  console.log(req.headers);
+app.get("/:id", userAuthentication, async (req, response, next) => {
+  const user_id = req.auth.id
   try {
     let res = await Artist.findByPk(req.params.id, {
       include: [
@@ -15,7 +15,7 @@ app.get("/:id", async (req, response, next) => {
             Album,
             {
               model: Interaction,
-              where: { user_id: req.headers["x-custom-header"] },
+              where: { user_id },
               required: false,
             },
           ],

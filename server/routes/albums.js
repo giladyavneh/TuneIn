@@ -5,6 +5,7 @@ const {Album,Artist,Song,Interaction}=require("../models");
 
 app.get("/:id", async (req, response,next) => {
   try{
+    const user_id = req.auth.id
     let res = await Album.findByPk(req.params.id,{
       include: [
         Artist,
@@ -15,7 +16,7 @@ app.get("/:id", async (req, response,next) => {
             Artist,
             {
               model: Interaction,
-              where: { user_id: req.headers["x-custom-header"] },
+              where: { user_id },
               required: false,
             },
           ],

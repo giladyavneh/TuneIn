@@ -45,10 +45,10 @@ function LoginPage({autoConnect}) {
       else{
           if(rememberMe){
             localStorage.setItem("access_token", comecabk.access_token)
-            localStorage.setItem("refresh_token", comecabk.access_token)
+            localStorage.setItem("refresh_token", comecabk.refresh_token)
           }
           sessionStorage.setItem("access_token", comecabk.access_token)
-          sessionStorage.setItem("refresh_token", comecabk.access_token)
+          sessionStorage.setItem("refresh_token", comecabk.refresh_token)
           autoConnect(comecabk.access_token)
           History.push('/')
       }

@@ -12,6 +12,7 @@ import Auth from "./AuthApi";
 import LoginPage from "./components/LoginPage";
 import SignIn from "./components/SignIn";
 import jwt from "jsonwebtoken";
+import httpClient from "./services/httpClient";
 
 
 function App() {
@@ -34,13 +35,14 @@ function App() {
     }
     
   },[])
+  useEffect(()=>console.log(user),[user])
   const [playingNow, setPlayingNow] = useState();
   const [mediaPlays, setMediaPlays] = useState(false);
   useEffect(() => {if(playingNow)setMediaPlays(true)}, [playingNow]);
 
   
   async function quickAdd(id,type){
-    let data=await fetch(`/song?${type}=${id}`,{"headers":{'X-Custom-Header': String(user.id)}}).then(res=>res.json())
+    let {data}=await httpClient.get(`/song?${type}=${id}`)
     let newSongs;
     if (playingNow){
       let titles=playingNow.map(song=>song.id)
@@ -50,23 +52,23 @@ function App() {
   }
   
   async function quickPlay(id,type){
-    let data=await fetch(`/song?${type}=${id}`,{"headers":{'X-Custom-Header': String(user.id)}}).then(res=>res.json())
+    let {data}=await httpClient.get(`/song?${type}=${id}`)
     setPlayingNow(data)
   }
   
   function likeIt(song_id,type){
     console.log(song_id)
     let options={
-      method:"PUT",
-      body:JSON.stringify({isLiked:true}),
+      // method:"PUT",
+      
       headers:{
           'Content-Type':'application/json'
       }
   }
-  fetch(`/interaction/${user.id}/${song_id}`, options)
+  httpClient.put(`/interaction/${user.id}/${song_id}`,{isLiked:true}, options)
   }
 
-  async function autoConnect(token){
+async function autoConnect(token){
     try{
       const res = jwt.decode(token)
       console.log('imlogged')

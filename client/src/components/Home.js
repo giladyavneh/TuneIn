@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TopBanner from "./TopBanner";
 import DisplayCarusel from "./DisplayCarusel";
 import Avatar from "./Avatar";
+import httpClient from "../services/httpClient";
 function Home({quickPlay,quickAdd}) {
   const [topSongs, setTopSongs] = useState([]);
   const [topArtists, setTopArtists] = useState([]);
@@ -10,8 +11,8 @@ function Home({quickPlay,quickAdd}) {
   useEffect(
     () =>{
     async function getData(){
-      let topsongs= await fetch("/top_songs")
-        .then((res) => res.json())
+      let topsongs= await httpClient.get("/top_songs")
+        .then((res) => res.data)
       setTopSongs(topsongs)}
       getData()
     },
@@ -20,8 +21,8 @@ function Home({quickPlay,quickAdd}) {
   useEffect(
     () =>{
     async function getData(){
-     let topartists=await fetch("/top_artists")
-        .then((res) => res.json())
+     let topartists=await httpClient.get("/top_artists")
+        .then((res) => res.data)
       setTopArtists(topartists)}
       getData()
     },
@@ -30,8 +31,8 @@ function Home({quickPlay,quickAdd}) {
   useEffect(
     () =>{
     async function getData(){
-      let topalbums= await fetch("/top_albums")
-        .then((res) => res.json())
+      let topalbums= await httpClient.get("/top_albums")
+        .then((res) => res.data)
       setTopAlbums(topalbums)}
       getData()
     },
@@ -40,8 +41,8 @@ function Home({quickPlay,quickAdd}) {
   useEffect(
     () =>{
     async function getData(){
-     let topplaylists=await fetch("/top_playlists")
-        .then((res) => res.json())
+     let topplaylists=await httpClient.get("/top_playlists")
+        .then((res) => res.data)
       setTopPlaylists(topplaylists)}
       getData()
     },

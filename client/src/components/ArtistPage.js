@@ -6,6 +6,7 @@ import SongListItem from "./SongListItem";
 import { match, useLocation, useParams } from "react-router-dom";
 import Auth from "../AuthApi";
 import QuickPlaylistAdd from "./QuickPlaylistAdd";
+import httpClient from "../services/httpClient";
 
 function ArtistPage({ quickAdd, quickPlay, likeIt }) {
   const id = useParams().id;
@@ -16,7 +17,7 @@ function ArtistPage({ quickAdd, quickPlay, likeIt }) {
   
   useEffect(() => {
     let getData = async () => {
-      let data = await fetch(`/artist/${id}`,{headers:{"X-Custom-Header":user.id}}).then((res) => res.json());
+      let {data} = await httpClient.get(`/artist/${id}`)
       setData(data);
     };
     getData();
