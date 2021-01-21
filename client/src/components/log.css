@@ -89,5 +89,16 @@
     position: relative;
     right: 3px;
     margin: 5px;
-
+}
+.background .content .card .google-connect{
+    margin: 15px 10px 0px 10px;
+    border-radius: 5px;
+    padding: 5px;
+    font-weight: bold;
+    background-color: rgb(30,30,30);
+    color: rgb(180, 180, 180);
+}
+.background .content .card .google-connect img{
+    height: 16px;
+    filter: contrast(0.0);
 }

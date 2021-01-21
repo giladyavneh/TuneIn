@@ -13,6 +13,9 @@ import LoginPage from "./components/LoginPage";
 import SignIn from "./components/SignIn";
 import jwt from "jsonwebtoken";
 import httpClient from "./services/httpClient";
+import authCallback from "./components/authCallback";
+import dotenv from "dotenv";
+dotenv.config()
 
 
 function App() {
@@ -93,11 +96,12 @@ async function autoConnect(token){
 
   return (
     <BrowserRouter>
-    <Auth.Provider value={{user,setUser}}>
+    <Auth.Provider value={{user,setUser, setLoggedIn}}>
       {loading?
       <div style={{ background: "rgb(60,60,60)", minHeight: "100vh"}}></div>:
       !loggedIn?
       <Switch>
+        <Route path="/authCallback" component={authCallback}/>
         <Route path="/login">
           <LoginPage autoConnect={autoConnect}/>
         </Route>

@@ -63,13 +63,28 @@ app.post("/login", loginAuth, async (req, response, next) => {
   }
 });
 
-app.post("/connect", async (req, response, next) => {
+app.post("/third_party_auth", async (req, response, next) => {
   try {
-    let res = await User.findAll({ where: { username: req.body.username } });
-    if (res.length === 0) return response.status(500).send([]);
-    return response.send(
-      bcrypt.compareSync(res[0].password, req.body.idKey) ? res : []
-    );
+    console.log(req.body)
+    const {username, password, email} = req.body;
+    let res = await User.findOne({where: {email}})
+    if (!res) res = await User.create({username, password, email})
+    
+    response.send({
+      access_token:jwt.sign({
+      id:res.id,
+      username:res.username,
+      email:res.email,
+      is_admin:res.is_admin
+    }, process.env.JWT_ACCESS_SECRET,{expiresIn:20*60}),
+    refresh_token:jwt.sign({
+      id:res.id,
+      username:res.username,
+      email:res.email,
+      is_admin:res.is_admin
+    }, process.env.JWT_REFRESH_SECRET)
+  });
+
   } catch (e) {
     next(e);
   }

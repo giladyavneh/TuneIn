@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import "./log.css";
 import TopBanner from "./TopBanner";
+import {googleAuth} from "../services/googleAuth";
+
 
 function LoginPage({autoConnect}) {
   const [password, setPassword] = useState();
@@ -10,7 +12,8 @@ function LoginPage({autoConnect}) {
   const [nameMassage, setNameMassage] = useState();
   const [rememberMe, setRememberMe] = useState();
   const History=useHistory()
-
+  const Location = useLocation()
+  
   async function login() {
     if (!Boolean(username) || !Boolean(password)) {
       setNameMassage(
@@ -53,7 +56,7 @@ function LoginPage({autoConnect}) {
           History.push('/')
       }
   }
-
+  console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID)
   return (
     <div className="background">
       <TopBanner />
@@ -97,6 +100,9 @@ function LoginPage({autoConnect}) {
               Remember me
             </div>
           </div>
+          <button className="google-connect" onClick={googleAuth}>
+            Connect with <img src="https://www.flaticon.com/svg/vstatic/svg/299/299409.svg?token=exp=1611223517~hmac=903e6b8d969c8ed803c888ae3848dbad"/>
+          </button>
         </div>
       </div>
     </div>
