@@ -9,16 +9,15 @@ function AuthCallback(){
     const {setUser, setLoggedIn} = useContext(Auth)
     const History = useHistory()
     useEffect(()=>{
-        (async ()=>{
+        // (async ()=>{
             const auth_token = location.hash.slice(14).split('&')[0]
-            const userData = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json',
-            {headers:{"Authorization": `Bearer ${auth_token}`}})
-            .then(res=>res.json())
-            .then(res=>res)
-            .catch(err=>History.push("/login"))
-            httpClient.post("/third_party_auth",{
-                username: userData.name,
-                email:userData.email, password: userData.name
+        //     const userData = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json',
+        //     {headers:{"Authorization": `Bearer ${auth_token}`}})
+        //     .then(res=>res.json())
+        //     .then(res=>res)
+        //     .catch(err=>History.push("/login"))
+            httpClient.get("/third_party_auth/google",{
+                headers:{"Authorization": `Bearer ${auth_token}`}
             })
             .then(res=>{
                 const comeback = res.data
@@ -27,7 +26,7 @@ function AuthCallback(){
                 autoConnect(comeback.access_token)
                 History.push('')
             })
-        })()
+        // })()
     },[])
     
     async function autoConnect(token){

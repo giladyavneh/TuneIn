@@ -7,6 +7,7 @@ const songs = require("./routes/songs");
 const artists = require("./routes/artists");
 const albums = require("./routes/albums");
 const playlists = require("./routes/playlists");
+const thirdPartyAuth = require("./routes/thirdPartyAuth")
 const {
   User,
   Song,
@@ -63,32 +64,34 @@ app.post("/login", loginAuth, async (req, response, next) => {
   }
 });
 
-app.post("/third_party_auth", async (req, response, next) => {
-  try {
-    console.log(req.body)
-    const {username, password, email} = req.body;
-    let res = await User.findOne({where: {email}})
-    if (!res) res = await User.create({username, password, email})
-    
-    response.send({
-      access_token:jwt.sign({
-      id:res.id,
-      username:res.username,
-      email:res.email,
-      is_admin:res.is_admin
-    }, process.env.JWT_ACCESS_SECRET,{expiresIn:20*60}),
-    refresh_token:jwt.sign({
-      id:res.id,
-      username:res.username,
-      email:res.email,
-      is_admin:res.is_admin
-    }, process.env.JWT_REFRESH_SECRET)
-  });
+app.use("/third_party_auth", thirdPartyAuth)
 
-  } catch (e) {
-    next(e);
-  }
-});
+// app.post("/third_party_auth", async (req, response, next) => {
+//   try {
+//     console.log(req.body)
+//     const {username, password, email} = req.body;
+//     let res = await User.findOne({where: {email}})
+//     if (!res) res = await User.create({username, password, email})
+    
+//     response.send({
+//       access_token:jwt.sign({
+//       id:res.id,
+//       username:res.username,
+//       email:res.email,
+//       is_admin:res.is_admin
+//     }, process.env.JWT_ACCESS_SECRET,{expiresIn:20*60}),
+//     refresh_token:jwt.sign({
+//       id:res.id,
+//       username:res.username,
+//       email:res.email,
+//       is_admin:res.is_admin
+//     }, process.env.JWT_REFRESH_SECRET)
+//   });
+
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 app.use(userAuthentication)
 
