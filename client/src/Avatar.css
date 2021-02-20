@@ -1,0 +1,51 @@
+.Avatar{
+    margin: 20px;
+    background-size: cover;
+    border-radius: 50%;
+    width:150px;
+    height:150px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: white;
+    font-weight: bold;
+    padding: 15px;
+}
+.identifier{
+    
+    position: absolute;
+    height: 30%;
+    width: 30%;
+    top:0;
+    right: 0;
+    background-color: black;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+.identifier img{
+    filter: invert(1);
+    height: 100%;
+}
+.quickActions{
+    position: absolute;
+    bottom: -10%;
+    right: -40%;
+    display: flex;
+    justify-content: space-between;
+    height: 50%;
+    width: 100%;
+}
+.quickAdd, .quickPlay{
+    height: 100%;
+    width: 48%;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    cursor: pointer;
+}
+.quickActions img{
+    filter: invert(0);
+    opacity:0.8;
+    width: 80%;
+}

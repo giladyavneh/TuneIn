@@ -1,0 +1,36 @@
+.AddContent{
+    background-color: rgb(60, 60, 60);
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 60px;
+}
+.main{
+    min-height: 60vh;
+    max-width: 800px;
+    margin:auto;
+}
+.main .tabs{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+}
+.main .tabs button{
+    border-color: gray gray rgb(20, 20, 20) gray;
+    padding: 5px;
+    background: none;
+    border-style: solid;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: rgb(202, 202, 202);
+    background-color: rgb(20, 20, 20);
+    cursor: pointer;
+}
+.main .tabs button:hover{
+    color: white;
+}
+.main .content{
+    background-color: rgb(20, 20, 20);
+    min-height: 60vh;
+}
+.content{
+    padding: 50px;
+}

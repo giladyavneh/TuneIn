@@ -1,0 +1,23 @@
+.Controller{
+    display: flex;
+    width: fit-content;
+    padding: 0px 10px;
+}
+.Controller button{
+    margin: 5px;
+    border: none;
+    background: none;
+}
+.Controller img{
+    filter: invert(0.7);
+    height: 30px;
+    width: 30px;
+}
+#opener{
+    position: absolute;
+    top:0px;
+    right: 15px;
+    color: whitesmoke;
+    font-weight: bold;
+    cursor: pointer;
+}

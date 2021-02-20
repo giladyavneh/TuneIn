@@ -1,0 +1,38 @@
+.SongListItem{
+    background-image: linear-gradient(rgb(30,30,30),black);
+    margin: 5px;
+    padding:5px;
+    color:whitesmoke;
+    display: grid;
+    grid-template-columns: auto min-content;
+    column-gap: 5px;
+}
+.info, .player{
+    background-image: inherit;
+    white-space: nowrap;
+}
+.info{
+    overflow-x: hidden;
+    
+}
+.metadata{
+    width: auto;
+    color: rgb(160, 160, 160);
+}
+.player{
+    display: flex;
+    align-items: center;
+}
+.player button{
+    cursor: pointer;
+    margin: 5px;
+    border: none;
+    background: none;
+    height: 30px;
+    width: 30px;
+}
+.player img{
+    filter: invert(0.7);
+    height: 100%;
+    width: 100%;
+}

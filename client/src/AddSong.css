@@ -1,0 +1,83 @@
+.preview{
+    display: flex;
+    justify-content: center;
+}
+.preview .video{
+    margin: 10px;
+    height: 150px;
+    width: 240px;
+}
+.preview .coverImage{
+    margin: 10px 20px;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+}
+.preview .coverImage img{
+    border-radius: 50%;
+    height: 100%;
+}
+.preview .info{
+    color: whitesmoke;
+    min-width: 250px;
+}
+.meta h2{
+    display: inline;
+}
+.form{
+    display: grid;
+    grid-template-columns: 55% 35%;
+    column-gap: 10%;
+}
+.songTitle{
+    margin: 10px;
+}
+.songTitle h4{
+    margin: 0px;
+}
+.songTitle .plain{
+    width: 100%;
+    border-radius: 5px;
+    height: 20px;
+}
+.divided{
+    display: grid;
+    grid-template-columns: 75% 15%;
+    column-gap: 10%;
+}
+.divided .trackNumber{
+    white-space: nowrap;
+}
+.divided .trackNumber input{
+    width: 100%;
+}
+.form .fields{
+    width:100%;
+    color: whitesmoke;
+    font-size: 20px;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column-reverse;
+}
+.submitArea{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.submitAreaP{
+    
+}
+
+.submitButton button{
+    width: 100%;
+    background-color: rgb(190, 190, 190);
+    border-radius: 20px;
+    padding: 10px;
+    font-weight: bold;
+}
+.submitArea .massageBoard{
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px;
+}

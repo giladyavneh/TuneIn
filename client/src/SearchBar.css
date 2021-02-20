@@ -1,0 +1,12 @@
+.SearchBar input{
+    margin: 0px;
+    position: relative;
+    top: 2.5px;
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+}
+.resultsTab{
+    background-color: whitesmoke;
+    color: gray;
+}
